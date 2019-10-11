@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <p>说明文档</p>
+    <!-- 
+var info2 = {
+                "1??": 0,
+                "????": 1,
+                "?????": 2,
+                "????????": 3,
+                "???": 4,
+                "???": 5
+            }
+            //????? 
+            // a?????
+            //uu???
+            function Edge() {
+            }
+            Edge.prototype.a = ""
+            Edge.prototype.b = ""
+            Edge.prototype.cost = 0
+            function Graph() {
+                this.Vertex = {}
+                this.adj = []
+                this.minadj = function (n) {
+                    var tmp = this.add[n]
+                    var e = new Edge()
+                    e.cost = inf
+                    for (let i = 0; i < tmp.length; i++) {
+                        if (e.cost > tmp[i]) {
+                            e.cost = tmp[i]
+                            e.a = n
+                            e.b = i
+                        }
+                    }
+                    return e
+                }
+            }
+            function TSP(a, uu) { //???
+                var u = uu
+                var n = a.length
+                var p = []
+                var vis = {}
+                for (var i = 0; i < n; i++) {
+                    vis[i] = false
+                }
+                vis[u] = true
+                while (p.length < n - 1) {
+                    var e = {}
+                    e["a"] = u
+                    e["w"] = 1000 //max
+                    for (var i = 0; i < n; i++) {
+                        if (a[u][i] < e["w"] && vis[i] == false) {
+                            e["w"] = a[u][i]
+                            e["b"] = i
+                        }
+                    }
+                    vis[u] = true
+                    p.push(e)
+                    u = e["b"]
+                }
+                var tmp = {}
+                tmp["a"] = p[p.length - 1]["b"]
+                tmp["b"] = uu
+                tmp["w"] = a[uu][tmp["a"]]
+                p.push(tmp)
+                var cost = 0
+                for (var i = 0; i < n; i++) {
+                    cost += p[i]["w"]
+                }
+                return [p, cost]
+            }
+
+
+ -->
+</body>
+</html>
