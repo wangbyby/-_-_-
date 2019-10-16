@@ -9,18 +9,24 @@ class Location:
         self.lat = args["lat"]
     
 class Graph:
-    martix = [[]]
+    martix = []
 
-    #根据点构造二维矩阵
-    def getGraph(self, list_locations=[]):
-        
-        def __init__(self):
-            #从json文件中读取数据得到矩阵
-            pass
-        
-        #Dijikstra算法
-        def dj(self, a,b): #a为起点,b为终点 a,b都为id
-            pass
-        def search(self,a,b):#a为起点,b为终点 a,b为经纬度
+    #根据json文件构造二维矩阵
+    def getGraph(self,data):
+        pass
+    #弗洛伊德算法
+    def floyd(self): #a为起点,b为终点 a,b都为id
+        n = len(self.martix) # 矩阵的行数
+        d = self.martix.copy() # 复制 self
 
-            pass
+        map = {} #储存path
+        range_n = range(0,n)
+        for i in range_n:
+            map[i] = {}
+        for k in range_n:
+            for i in range_n:
+                for j in range_n:
+                    if d[i][j] > d[i][k]+ d[k][j]:
+                        d[i][j] = d[i][k] + d[k][j]
+                        map[i][j] = k
+        return {"m":d, "path":map}

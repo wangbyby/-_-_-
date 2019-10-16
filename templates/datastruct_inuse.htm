@@ -7,19 +7,24 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>Document</title>
 
-        <!-- 导入高德 -->
-        <script src="https://webapi.amap.com/maps?v=1.4.15&key=6a159ce0aac34e52264dcc63bb7bfeca&plugin=AMap.Walking""></script>
+
+
         <!-- 导入jquery -->
-        <script src=" jquery-3.4.1.min.js"></script>
+        <script src=" http://127.0.0.1:5000/get_file/jquery-3.4.1.min.js"> </script>
         <!-- 导入算法 -->
-        <script src="datastruct_TSP.js"></script>
-        <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
-        <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
+        <script src="http://127.0.0.1:5000/get_file/datastruct_TSP.js"></script>
+
+
+        <!-- 高德地图api -->
+        <script src="https://webapi.amap.com/maps?v=1.4.15&key=6a159ce0aac34e52264dcc63bb7bfeca&plugin=AMap.Walking""></script>
+        <script src=" https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"> </script> <script
+            type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
         <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
         <style>
             #container {
                 width: 900px;
                 height: 900px;
+
             }
         </style>
     </head>
@@ -84,7 +89,8 @@
                         content: "<div class='info'>第" + positionArr.length + "个点"+"经纬度"+ e.lnglat.getLng() + ',' + e.lnglat.getLat()+ '<br>' +
                             '停留时间(分钟)<input type="number" name="" id=""> </div>', //设置文本标注内容
                             */
-                        content: "<div class='info'>第" + positionArr.length + "个点<br>"+"经纬度"+ e.lnglat.getLng() + ',' + e.lnglat.getLat()+ 
+                        content: "<div class='info'>第" + positionArr.length + "个点<br>" + "经纬度" + e
+                            .lnglat.getLng() + ',' + e.lnglat.getLat() +
                             '</div>',
                         direction: 'right' //设置文本标注方位
                     })
@@ -92,7 +98,7 @@
                     positionArr.push([e.lnglat.getLng(), e.lnglat.getLat()])
                     markerArr.push(newMarker)
 
-                    console.log("content", newMarker.content)
+
                 }
             });
 
@@ -116,7 +122,7 @@
                 for (let i = 0, len = stlabel.length; i < len; i++) {
                     stvalue.push(0 | stlabel[i].value) // string转number
                 }
-                console.log("the info", stvalue)
+                //console.log("the info", stvalue)
                 $('#addMarker').attr("checked", false)
                 if (positionArr.length <= 1) {
                     alert("没必要呀")
@@ -125,12 +131,10 @@
                         distanceMartix[i] = new Array(positionArr.length)
                     }
                     for (let i = 0; i < positionArr.length; i++) {
-
                         for (let j = i; j < positionArr.length; j++) {
                             var tmp = AMap.GeometryUtil.distance(positionArr[i], positionArr[j])
                             distanceMartix[i][j] = tmp
                             distanceMartix[j][i] = tmp
-
                         }
                     }
                 }
@@ -142,8 +146,8 @@
                 let result = TSP(graph, 0)
                 console.log("result=", result)
 
-                //显示路径
-                let pathMap = []
+                //显示形式路径
+                let pathMap = [] //pathMap为结果经纬度顺序
                 for (var i = 0; i < result.length; i++) {
                     var index = result[i]
                     var tmpPosition = positionArr[index]
@@ -154,125 +158,118 @@
                 var polyline = new AMap.Polyline({
                     path: pathMap, //设置线覆盖物路径
                     showDir: true,
-                    strokeColor: '#3366bb', // 线颜色
+                    strokeColor: '#f01a1a', // 线颜色
                     strokeWeight: 10 // 线宽
                 });
                 map.add(polyline);
+                //显示形式路径 end
 
+                //准备覆盖tag= 'ready to change'
+                //构造矩阵
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "http://127.0.0.1:5000/query", //请求后端传输数据
+                    data: {
+                        params: JSON.stringify()
+                    },
+                    success: function (data, textStatus, jqxhr) {
 
-                //行走路线
-
-
-
-                var walking = new AMap.Walking({
-                    map: map,
-                    panel: "panel"
-                });
-
-                let viewPath = []
-                let tmplength = pathMap.length
-                for (let i = 0; i < tmplength; i++) {
-                    let a1 = pathMap[i]
-                    let a2 = pathMap[(i + 1) % tmplength]
-                    //viewpath.push(a2)
-                    //根据起终点坐标规划步行路线
-                    console.log("step=", [
-                        [a1.lng, a1.lat],
-                        [a2.lng, a2.lat]
-                    ])
-                    walking.search([a1.lng, a1.lat], [a2.lng, a2.lat], function (status, result) {
-                        if (status === 'complete') {
-                            if (result.routes && result.routes.length) {
-                                if (result.routes[0] in viewPath) {} else {
-                                    viewPath = []
-                                    ///routeLine
-                                    //viewPath.push.apply(viewPath, result.routes[0].steps)
-                                    for (let j = 0; j < result.routes[0].steps.length; j++) {
-                                        let tmp_routes = result.routes[0].steps[j].path
-
-                                        //console.log(result.routes[0].steps[j].path )
-                                        for (let k = 0, lenk = tmp_routes.length; k < lenk; k++) {
-                                            viewPath.push([tmp_routes[k].lng, tmp_routes[k].lat])
-                                        }
-                                        //viewPath.push.apply(viewPath,result.routes[0].steps[i].path )
-                                    }
-
-                                    //console.log( "sth want to know",viewPath)
-
-                                    //将路线显示到地图上
-                                    var routeLine = new AMap.Polyline({
-                                        path: viewPath,
-                                        showDir: true,
-                                        strokeColor: '#00ffff', // 线颜色
-                                        strokeWeight: 10 // 线宽
-
-                                    })
-                                    //添加到图层上
-                                    map.add(routeLine)
-                                    map.setFitView()
-                                }
+                        var lenJson = Object.keys(data).length
+                        //console.log("lendata",lenJson)
+                        var matrix = new Array()
+                        for (let i = 0; i < lenJson; i++) {
+                            matrix[i] = []
+                            for (let j = 0; j < lenJson; j++) {
+                                matrix[i][j] = inf
                             }
-                            log.success('绘制步行路线完成')
-
-
-                        } else {
-                            log.error('步行路线数据查询失败' + result)
                         }
 
-                    })
+                        for (var i in data) {
+                            const val = data[i]
+                            /*
+                            var m1 = new AMap.Marker({
+                                map: map,
+                                draggable: true,
+                                position: new AMap.LngLat(val[0], val[1])
+                            });
+                            m1.setLabel({
+                                content: '<div>' + i +
+                                    '</div>',
+                                direction: 'right' //设置文本标注方位
+                            })
+                            */
+                            for (var j = 0; j < val[2].length; j++) {
+                                var a1 = [val[0], val[1]]
+                                var a2 = data[val[2][j]]
+                                var b = [a2[0], a2[1]]
+                                //console.log("a, b=",a1,b)
+                                var dis = computeDis(a1, b)
+                                //console.log("val[2][j]",val[2][j])
+                                matrix[i][val[2][j]] = dis
+                            }
+                        }
 
-                }
+                        //从positionArr(经纬度数组)计算离其距离最近数组
+                        var finnalArr = []
+                        for (var i = 0, n = positionArr.length; i < n; i++) {
+                            var j = 0
+                            var minDis = computeDis([data[0][0], data[0][1]], positionArr[i])
+                            for (var k in data) {
+                                var tmppDis = computeDis([data[k][0], data[k][1]], positionArr[i])
+                                if (minDis > tmppDis) {
+                                    minDis = tmppDis
+                                    j = 0 | k //保证j为数字
+                                }
+                            }
+                            finnalArr.push(j)
+                        }
+                        console.log("finnal ", finnalArr)
 
+                        var res = FLOYD(matrix)
+                        console.log("res martix = ", res)
+
+
+                        //查询+绘图
+                        //显示searchpath
+                        var searchPath = []
+                        for (var i = 0, n = finnalArr.length; i < n ; i++) {
+                            searchPath.push.apply(searchPath,  Search(res.paths, finnalArr[i], finnalArr[(i+1)%n]) )
+                        }
+                        console.log("search path = ", searchPath)
+
+                        var searchPolyline = []
+                        
+                        for (var i = 0, n = searchPath.length; i < n; i++) {
+                            var tmp = data[searchPath[i]]
+                            searchPolyline.push([tmp[0], tmp[1]])
+                        }
+                        var routeLine2 = new AMap.Polyline({
+                            path: searchPolyline,
+                            showDir: true,
+                            strokeColor: '#000fff', // 线颜色
+                            strokeWeight: 10 // 线宽
+
+                        })
+                        //添加到图层上
+                        map.add(routeLine2)
+
+                    }
+                })
             })
 
-
-
-            /*
-             //添加地图点标记
-            let maker1 = new AMap.Marker({
-                position: [116.47635359815848, 39.873590444308306],
-            })
-            map.add(maker1)
-
-            //折线标记
-            var lineArr = [
-                [116.368904, 39.913423],
-                [116.382122, 39.901176],
-                [116.387271, 39.912501],
-                [116.398258, 39.904600]
-            ];
-            var polyline = new AMap.Polyline({
-                path: lineArr,          //设置线覆盖物路径
-                strokeColor: "#3366FF", //线颜色
-                strokeWeight: 5,        //线宽
-                strokeStyle: "solid",   //线样式
-            });
-            map.add(polyline);
-            var auto = new AMap.Autocomplete({
-                input: "tipinput"
-            });
-            AMap.event.addListener(auto, "select", select); //注册监听，当选中某条记录时会触发
-            function select(e) {
-                if (e.poi && e.poi.location) {
-                    map.setZoom(15);
-                    map.setCenter(e.poi.location);
-                }
+            function computeDis(l1, l2) {
+                var a = new AMap.LngLat(l1[0], l1[1])
+                var b = new AMap.LngLat(l2[0], l2[1])
+                return Math.round(a.distance(b))
             }
+
             
-            //信息窗体
-            var infoWindow = new AMap.InfoWindow({ //创建信息窗体
-                isCustom: true, //使用自定义窗体
-                content: '<div>信息窗体</div>', //信息窗体的内容可以是任意html片段
-                offset: new AMap.Pixel(-20, -62)
-            });
-            var onMarkerClick = function (e) {
-                infoWindow.open(map, e.target.getPosition()); //打开信息窗体
-                //e.target就是被点击的Marker
-            }
-            maker1.on('click', onMarkerClick); //绑定click事件
-*/
         </script>
 
     </body>
+
+
+
 
 </html>

@@ -70,77 +70,6 @@ function Graph() {
         }
         return ee;
     };
-    /*
-    this.floyd = function (a, b) {
-
-        var result = new Result()
-        result.matrix = this.info.slice()
-        var lenRows = result.matrix.length
-
-
-        for (var index = 0; index < lenRows; index++) {
-            result.paths[index] = {}
-        }
-        for (var k = 0; k < lenRows; k++) {
-            for (var i = 0; i < lenRows; i++) {
-                for (var j = 0; j < lenRows; j++) {
-                    if (result.matrix[i][j] > result.matrix[i][k] + result.matrix[k][j]) {
-                        result.matrix[i][j] = result.matrix[i][k] + result.matrix[k][j]
-                        result.paths[i] = {
-                            j: k
-                        } //反过来想
-                    }
-                }
-            }
-        }
-
-        it_b = b
-        while (result.paths[a][it_b] != undefined) {
-            result.shortest_a_b.push(result.paths[a][it_b])
-            it_b = result.paths[a][it_b]
-        }
-        result.shortest_a_b.push(a)
-
-        result.shortest_a_b.reverse()
-        return result
-    }
-    */
-    /*暂时不能用
-    this.HamitonTSP = function (u) {
-
-        var ver = this.Vertex()
-        var access = []
-        var path = []
-        access.push(u)
-        var dd = ver.indexOf(u)
-        ver.splice(dd, 1)
-
-        var root = new Edge()
-        while (ver.length != 0) {
-            var e = this.visted_unvis(access, ver)
-            console.log("edge=", e)
-            access.push(e.b)
-            path.push(e)
-            dd = ver.indexOf(e.b)
-            ver.splice(dd, 1)
-
-            var ecopy = e.copy_self()
-
-            InsertNode(root, ecopy)
-        }
-
-        console.log("root=", root)
-        var hamitonTree = []
-
-        PreOrder2(root, hamitonTree)
-        hamitonTree[0] = 0
-        hamitonTree.push(0)
-        console.log("hamiton=", hamitonTree)
-        return hamitonTree
-
-
-
-    } */
 }
 
 function TSP(G, u) {
@@ -254,6 +183,7 @@ function Search(paths,a,b) {
 // exports.TSP = TSP
 // exports.Graph = Graph
 
+//在数组中遍历树
 // function PreOrder(array) {
 //     for (var index = 0; index < array.length; index++) {
 //         const node = array[index];
