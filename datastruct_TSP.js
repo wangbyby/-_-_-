@@ -83,7 +83,7 @@ function TSP(G, u) {
     var root = new Edge()
     while (ver.length != 0) {
         var e = G.visted_unvis(access, ver)
-        console.log("edge=", e)
+        //console.log("edge=", e)
         access.push(e.b)
         path.push(e)
         dd = ver.indexOf(e.b)
@@ -158,6 +158,7 @@ function FLOYD(G){
                     result.matrix[i][j] = result.matrix[i][k] + result.matrix[k][j]
                     result.paths[i][j] = k
                 }
+            
             }
         }
     }
@@ -167,6 +168,7 @@ function FLOYD(G){
 }
 
 function Search(paths,a,b) {
+    //用dijkstra替代
     var shp = [b]
     var it_b = b
     while(paths[a][it_b]!=undefined){
