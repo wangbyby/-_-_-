@@ -147,24 +147,26 @@
                 console.log("result=", result)
 
                 //显示形式路径
-                let pathMap = [] //pathMap为结果经纬度顺序
+                let TSPAth = [] //TSPAth为结果经纬度顺序
                 for (var i = 0; i < result.length; i++) {
                     var index = result[i]
-                    var tmpPosition = positionArr[index]
-                    pathMap.push(tmpPosition)
+                    TSPAth.push(positionArr[index])
                 }
-                console.log("path", pathMap)
+                //console.log("position = ",positionArr)
+                console.log("TSPAth", TSPAth)
                 //显示折线
+                /*
                 var polyline = new AMap.Polyline({
-                    path: pathMap, //设置线覆盖物路径
+                    path: TSPAth, //设置线覆盖物路径
                     showDir: true,
                     strokeColor: '#f01a1a', // 线颜色
                     strokeWeight: 10 // 线宽
                 });
-                map.add(polyline);
+                map.add(polyline); 
+                */
                 //显示形式路径 end
+                
 
-                //准备覆盖tag= 'ready to change'
                 //构造矩阵
                 $.ajax({
                     type: "post",
@@ -209,14 +211,15 @@
                                 matrix[i][val[2][j]] = dis
                             }
                         }
-
-                        //从positionArr(经纬度数组)计算离其距离最近数组
+                        
+                        
+                        //从TSPAth(经纬度数组)计算离其距离最近数组
                         var finnalArr = []
-                        for (var i = 0, n = positionArr.length; i < n; i++) {
+                        for (var i = 0, n = TSPAth.length; i < n; i++) {
                             var j = 0
-                            var minDis = computeDis([data[0][0], data[0][1]], positionArr[i])
+                            var minDis = computeDis([data[0][0], data[0][1]], TSPAth[i])
                             for (var k in data) {
-                                var tmppDis = computeDis([data[k][0], data[k][1]], positionArr[i])
+                                var tmppDis = computeDis([data[k][0], data[k][1]], TSPAth[i])
                                 if (minDis > tmppDis) {
                                     minDis = tmppDis
                                     j = 0 | k //保证j为数字
@@ -226,20 +229,24 @@
                         }
                         console.log("finnal ", finnalArr)
 
+                        //已知点
+                        //换成dijkstra算法 search比较好
+
+                        //tag: ready to change
                         var res = FLOYD(matrix)
                         console.log("res martix = ", res)
-
 
                         //查询+绘图
                         //显示searchpath
                         var searchPath = []
                         for (var i = 0, n = finnalArr.length; i < n ; i++) {
                             searchPath.push.apply(searchPath,  Search(res.paths, finnalArr[i], finnalArr[(i+1)%n]) )
+                            console.log("search  every path = ", searchPath)
                         }
+                         //tag: ready to change end
                         console.log("search path = ", searchPath)
 
                         var searchPolyline = []
-                        
                         for (var i = 0, n = searchPath.length; i < n; i++) {
                             var tmp = data[searchPath[i]]
                             searchPolyline.push([tmp[0], tmp[1]])
@@ -249,7 +256,6 @@
                             showDir: true,
                             strokeColor: '#000fff', // 线颜色
                             strokeWeight: 10 // 线宽
-
                         })
                         //添加到图层上
                         map.add(routeLine2)
@@ -268,8 +274,4 @@
         </script>
 
     </body>
-
-
-
-
 </html>
