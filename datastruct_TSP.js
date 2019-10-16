@@ -1,9 +1,15 @@
+const inf = 1000000//100000代表无穷大
+
+function Result() {}
+Result.prototype.matrix = null
+Result.prototype.paths = {}
+
 function Edge() {
     this.a = ""
     this.b = ""
 
     this.copy_self = function () {
-        let copy = new Edge()
+        var copy = new Edge()
         copy.a = this.a
         copy.b = this.b
         copy.cost = this.cost
@@ -17,6 +23,7 @@ Edge.prototype.left = null
 Edge.prototype.right = null
 
 function Graph() {
+    this.info = []
     this.Vertex = function () {
         var tmp = []
         for (const iterator of this.info.keys()) {
@@ -24,7 +31,7 @@ function Graph() {
         }
         return tmp
     }
-    this.info = []
+
     this.adj = function (u, accessed) {
         var tmp = []
         for (var i = 0; i < this.info.length; i++) {
@@ -40,8 +47,8 @@ function Graph() {
     }
     this.visted_unvis = function (accessed, unaccess) {
         var path = []
-        for (let index = 0; index < accessed.length; index++) {
-            for (let j = 0; j < unaccess.length; j++) {
+        for (var index = 0; index < accessed.length; index++) {
+            for (var j = 0; j < unaccess.length; j++) {
                 var tmp = this.info[accessed[index]][unaccess[j]]
                 var e = new Edge()
                 e.a = accessed[index]
@@ -53,7 +60,7 @@ function Graph() {
         }
         var ee = new Edge()
         ee.cost = inf
-        for (let index = 0; index < path.length; index++) {
+        for (var index = 0; index < path.length; index++) {
             if (ee.cost > path[index].cost) {
                 ee.cost = path[index].cost
                 ee.a = path[index].a
@@ -61,12 +68,80 @@ function Graph() {
             }
 
         }
-        return ee
+        return ee;
+    };
+    /*
+    this.floyd = function (a, b) {
+
+        var result = new Result()
+        result.matrix = this.info.slice()
+        var lenRows = result.matrix.length
+
+
+        for (var index = 0; index < lenRows; index++) {
+            result.paths[index] = {}
+        }
+        for (var k = 0; k < lenRows; k++) {
+            for (var i = 0; i < lenRows; i++) {
+                for (var j = 0; j < lenRows; j++) {
+                    if (result.matrix[i][j] > result.matrix[i][k] + result.matrix[k][j]) {
+                        result.matrix[i][j] = result.matrix[i][k] + result.matrix[k][j]
+                        result.paths[i] = {
+                            j: k
+                        } //反过来想
+                    }
+                }
+            }
+        }
+
+        it_b = b
+        while (result.paths[a][it_b] != undefined) {
+            result.shortest_a_b.push(result.paths[a][it_b])
+            it_b = result.paths[a][it_b]
+        }
+        result.shortest_a_b.push(a)
+
+        result.shortest_a_b.reverse()
+        return result
     }
+    */
+    /*暂时不能用
+    this.HamitonTSP = function (u) {
 
+        var ver = this.Vertex()
+        var access = []
+        var path = []
+        access.push(u)
+        var dd = ver.indexOf(u)
+        ver.splice(dd, 1)
+
+        var root = new Edge()
+        while (ver.length != 0) {
+            var e = this.visted_unvis(access, ver)
+            console.log("edge=", e)
+            access.push(e.b)
+            path.push(e)
+            dd = ver.indexOf(e.b)
+            ver.splice(dd, 1)
+
+            var ecopy = e.copy_self()
+
+            InsertNode(root, ecopy)
+        }
+
+        console.log("root=", root)
+        var hamitonTree = []
+
+        PreOrder2(root, hamitonTree)
+        hamitonTree[0] = 0
+        hamitonTree.push(0)
+        console.log("hamiton=", hamitonTree)
+        return hamitonTree
+
+
+
+    } */
 }
-
-
 
 function TSP(G, u) {
     var ver = G.Vertex()
@@ -91,17 +166,16 @@ function TSP(G, u) {
     }
 
     console.log("root=", root)
-    let hamitonTree = []
+    var hamitonTree = []
 
     PreOrder2(root, hamitonTree)
-    hamitonTree[0] = 0
-    hamitonTree.push(0)
+    hamitonTree[0] = u
+    hamitonTree.push(u)
     console.log("hamiton=", hamitonTree)
     return hamitonTree
 }
 
 
-const inf = 100000 //100000代表无穷大
 
 //寻找前驱节点
 function FindPreNode(nowNode, findNode) {
@@ -139,10 +213,49 @@ function PreOrder2(root, l) {
     }
 }
 
+function FLOYD(G){
+    var result = new Result()
+    result.matrix = G
+    var lenRows = result.matrix.length
 
+
+    for (var index = 0; index < lenRows; index++) {
+        result.paths[index] = {}
+    }
+    for (var k = 0; k < lenRows; k++) {
+        for (var i = 0; i < lenRows; i++) {
+            for (var j = 0; j < lenRows; j++) {
+                if (result.matrix[i][j] > result.matrix[i][k] + result.matrix[k][j]) {
+                    result.matrix[i][j] = result.matrix[i][k] + result.matrix[k][j]
+                    result.paths[i][j] = k
+                }
+            }
+        }
+    }
+
+    
+    return result
+}
+
+function Search(paths,a,b) {
+    var shp = [b]
+    var it_b = b
+    while(paths[a][it_b]!=undefined){
+        shp.push(paths[a][it_b])
+        it_b = paths[a][it_b]
+    }
+    shp.push(a)
+    shp.reverse()
+    return shp
+    
+}
+
+// exports.FLOYD = FLOYD
+// exports.TSP = TSP
+// exports.Graph = Graph
 
 // function PreOrder(array) {
-//     for (let index = 0; index < array.length; index++) {
+//     for (var index = 0; index < array.length; index++) {
 //         const node = array[index];
 //         // array.find(x=> x.a == element.b)
 //         array.forEach(element => {
@@ -163,7 +276,7 @@ function PreOrder2(root, l) {
 //         });
 //     }
 
-//     let h = []
+//     var h = []
 //     h.push(array[0].a)
 //     rangeTree(array[0], array, h)
 //     h.push(array[0].a)
