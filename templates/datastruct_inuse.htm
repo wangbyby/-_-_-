@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Document</title>
+        <title>数据结构课设</title>
 
 
 
@@ -232,15 +232,12 @@
                         //已知点
                         //换成dijkstra算法 search比较好
 
-                        //tag: ready to change
-                        var res = FLOYD(matrix)
-                        console.log("res martix = ", res)
-
+            
                         //查询+绘图
                         //显示searchpath
                         var searchPath = []
-                        for (var i = 0, n = finnalArr.length; i < n ; i++) {
-                            searchPath.push.apply(searchPath,  Search(res.paths, finnalArr[i], finnalArr[(i+1)%n]) )
+                        for (var i = 0, n = finnalArr.length; i < n-1 ; i++) {
+                            searchPath.push.apply(searchPath,  Dijkstra(matrix, finnalArr[i], finnalArr[(i+1)]) )
                             console.log("search  every path = ", searchPath)
                         }
                          //tag: ready to change end

@@ -22,6 +22,8 @@ Edge.prototype.cost = 0
 Edge.prototype.left = null
 Edge.prototype.right = null
 
+
+
 function Graph() {
     this.info = []
     this.Vertex = function () {
@@ -32,7 +34,7 @@ function Graph() {
         return tmp
     }
 
-    this.adj = function (u, accessed) {
+    this.info = function (u, accessed) {
         var tmp = []
         for (var i = 0; i < this.info.length; i++) {
             if (!accessed.includes(i) || accessed.length == 0) {
@@ -142,45 +144,82 @@ function PreOrder2(root, l) {
     }
 }
 
-function FLOYD(G){
-    var result = new Result()
-    result.matrix = G
-    var lenRows = result.matrix.length
 
 
-    for (var index = 0; index < lenRows; index++) {
-        result.paths[index] = {}
+function Dijkstra(m,start,end) { //Dijkstra
+    var n = m.length
+    var Q = new minQueue()
+    var pre = {}
+    for(var i=0;i<n;i++){
+        Q.f[i] = inf
     }
-    for (var k = 0; k < lenRows; k++) {
-        for (var i = 0; i < lenRows; i++) {
-            for (var j = 0; j < lenRows; j++) {
-                if (result.matrix[i][j] > result.matrix[i][k] + result.matrix[k][j]) {
-                    result.matrix[i][j] = result.matrix[i][k] + result.matrix[k][j]
-                    result.paths[i][j] = k
-                }
-            
+    Q.f[start] = 0
+    Q.push_back(start)
+    while(Q.list.length !=0) {
+        var u = Q.pop_head()
+        console.log("u=",u)
+        for(var j=0;j<n;j++) {
+            if(m[u][j] == inf) {
+                continue
+            }
+            if(Q.f[j] > Q.f[u] + m[u][j]) {
+                Q.f[j] = Q.f[u] + m[u][j]
+                pre[j] = u
+                Q.push_back(j)
             }
         }
+        console.log("Queue=",Q.list)
+        console.log("pre=",pre)
+    }
+    return getPath(pre,end).reverse()
+}
+function getPath(cameFrom, current) {
+    var total_path = [current]
+    while(cameFrom[current] != undefined) {
+        current = cameFrom[current]
+        total_path.push(current)
+    }
+    return total_path
+}
+function minQueue() {
+    this.list = []
+    this.f = {}
+    this.push_back = function (element) {
+        this.list.unshift(element)
+        this.shiftdown(0)
+    }
+    this.Less = function (a, b) {
+        return a < b
+    }
+    this.Swap = function (a, b) {
+        [this.list[a], this.list[b]] = [this.list[b], this.list[a]]
     }
 
-    
-    return result
-}
+    this.pop_head = function () {
+        var tmp = this.list[0]
+        this.list = this.list.splice(1)
 
-function Search(paths,a,b) {
-    //用dijkstra替代
-    var shp = [b]
-    var it_b = b
-    while(paths[a][it_b]!=undefined){
-        shp.push(paths[a][it_b])
-        it_b = paths[a][it_b]
+        this.shiftdown(0)
+        //delete this.f[tmp]
+        return tmp
     }
-    shp.push(a)
-    shp.reverse()
-    return shp
-    
-}
 
+    this.shiftdown = function (index) {
+        let left = index * 2 + 1
+        let right = index * 2 + 2
+        let min = index
+        if (left < this.list.length && this.Less(this.f[this.list[left]], this.f[this.list[index]])) {
+            min = left
+        }
+        if (right < this.list.length && this.Less(this.f[this.list[right]], this.f[this.list[min]])) {
+            min = right
+        }
+        if (min != index) {
+            this.Swap(min, index)
+            this.shiftdown(min)
+        }
+    }
+}
 // exports.FLOYD = FLOYD
 // exports.TSP = TSP
 // exports.Graph = Graph
@@ -232,3 +271,28 @@ function Search(paths,a,b) {
 
 //     return PreOrder(Prim(G, u))
 // }
+
+function FLOYD(G){
+    var result = new Result()
+    result.matrix = G
+    var lenRows = result.matrix.length
+
+
+    for (var index = 0; index < lenRows; index++) {
+        result.paths[index] = {}
+    }
+    for (var k = 0; k < lenRows; k++) {
+        for (var i = 0; i < lenRows; i++) {
+            for (var j = 0; j < lenRows; j++) {
+                if (result.matrix[i][j] > result.matrix[i][k] + result.matrix[k][j]) {
+                    result.matrix[i][j] = result.matrix[i][k] + result.matrix[k][j]
+                    result.paths[i][j] = k
+                }
+            
+            }
+        }
+    }
+
+    
+    return result
+}
