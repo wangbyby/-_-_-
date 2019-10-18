@@ -1,4 +1,4 @@
-const inf = 1000000//100000代表无穷大
+const inf = 1000000 //100000代表无穷大
 
 function Result() {}
 Result.prototype.matrix = null
@@ -106,8 +106,6 @@ function TSP(G, u) {
     return hamitonTree
 }
 
-
-
 //寻找前驱节点
 function FindPreNode(nowNode, findNode) {
     if (nowNode == null) {
@@ -146,41 +144,43 @@ function PreOrder2(root, l) {
 
 
 
-function Dijkstra(m,start,end) { //Dijkstra
+function Dijkstra(m, start, end) { //Dijkstra
     var n = m.length
     var Q = new minQueue()
     var pre = {}
-    for(var i=0;i<n;i++){
+    for (var i = 0; i < n; i++) {
         Q.f[i] = inf
     }
     Q.f[start] = 0
     Q.push_back(start)
-    while(Q.list.length !=0) {
+    while (Q.list.length != 0) {
         var u = Q.pop_head()
-        console.log("u=",u)
-        for(var j=0;j<n;j++) {
-            if(m[u][j] == inf) {
+        // console.log("u=", u)
+        for (var j = 0; j < n; j++) {
+            if (m[u][j] == inf) {
                 continue
             }
-            if(Q.f[j] > Q.f[u] + m[u][j]) {
+            if (Q.f[j] > Q.f[u] + m[u][j]) {
                 Q.f[j] = Q.f[u] + m[u][j]
                 pre[j] = u
                 Q.push_back(j)
             }
         }
-        console.log("Queue=",Q.list)
-        console.log("pre=",pre)
+        // console.log("Queue=", Q.list)
+        // console.log("pre=", pre)
     }
-    return getPath(pre,end).reverse()
+    return getPath(pre, end).reverse()
 }
+
 function getPath(cameFrom, current) {
     var total_path = [current]
-    while(cameFrom[current] != undefined) {
+    while (cameFrom[current] != undefined) {
         current = cameFrom[current]
         total_path.push(current)
     }
     return total_path
 }
+
 function minQueue() {
     this.list = []
     this.f = {}
@@ -272,12 +272,10 @@ function minQueue() {
 //     return PreOrder(Prim(G, u))
 // }
 
-function FLOYD(G){
+function FLOYD(G) {
     var result = new Result()
     result.matrix = G
     var lenRows = result.matrix.length
-
-
     for (var index = 0; index < lenRows; index++) {
         result.paths[index] = {}
     }
@@ -288,11 +286,8 @@ function FLOYD(G){
                     result.matrix[i][j] = result.matrix[i][k] + result.matrix[k][j]
                     result.paths[i][j] = k
                 }
-            
             }
         }
     }
-
-    
     return result
 }

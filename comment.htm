@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+		<!-- 
+var info2 = {
+                "1??": 0,
+                "????": 1,
+                "?????": 2,
+                "????????": 3,
+                "???": 4,
+                "???": 5
+            }
+            //????? 
+            // a?????
+            //uu???
+            function Edge() {
+            }
+            Edge.prototype.a = ""
+            Edge.prototype.b = ""
+            Edge.prototype.cost = 0
+            function Graph() {
+                this.Vertex = {}
+                this.adj = []
+                this.minadj = function (n) {
+                    var tmp = this.add[n]
+                    var e = new Edge()
+                    e.cost = inf
+                    for (let i = 0; i < tmp.length; i++) {
+                        if (e.cost > tmp[i]) {
+                            e.cost = tmp[i]
+                            e.a = n
+                            e.b = i
+                        }
+                    }
+                    return e
+                }
+            }
+            function TSP(a, uu) { //???
+                var u = uu
+                var n = a.length
+                var p = []
+                var vis = {}
+                for (var i = 0; i < n; i++) {
+                    vis[i] = false
+                }
+                vis[u] = true
+                while (p.length < n - 1) {
+                    var e = {}
+                    e["a"] = u
+                    e["w"] = 1000 //max
+                    for (var i = 0; i < n; i++) {
+                        if (a[u][i] < e["w"] && vis[i] == false) {
+                            e["w"] = a[u][i]
+                            e["b"] = i
+                        }
+                    }
+                    vis[u] = true
+                    p.push(e)
+                    u = e["b"]
+                }
+                var tmp = {}
+                tmp["a"] = p[p.length - 1]["b"]
+                tmp["b"] = uu
+                tmp["w"] = a[uu][tmp["a"]]
+                p.push(tmp)
+                var cost = 0
+                for (var i = 0; i < n; i++) {
+                    cost += p[i]["w"]
+                }
+                return [p, cost]
+            }-->
+
+
+		<p>以下是在开发中有帮助的代码</p>
+		<div>
+
+			/*
+			//添加地图点标记
+			let maker1 = new AMap.Marker({
+			position: [116.47635359815848, 39.873590444308306],
+			})
+			map.add(maker1)
+
+			//折线标记
+			var lineArr = [
+			[116.368904, 39.913423],
+			[116.382122, 39.901176],
+			[116.387271, 39.912501],
+			[116.398258, 39.904600]
+			];
+			var polyline = new AMap.Polyline({
+			path: lineArr, //设置线覆盖物路径
+			strokeColor: "#3366FF", //线颜色
+			strokeWeight: 5, //线宽
+			strokeStyle: "solid", //线样式
+			});
+			map.add(polyline);
+			var auto = new AMap.Autocomplete({
+			input: "tipinput"
+			});
+			AMap.event.addListener(auto, "select", select); //注册监听，当选中某条记录时会触发
+			function select(e) {
+			if (e.poi && e.poi.location) {
+			map.setZoom(15);
+			map.setCenter(e.poi.location);
+			}
+			}
+
+			//信息窗体
+			var infoWindow = new AMap.InfoWindow({ //创建信息窗体
+			isCustom: true, //使用自定义窗体
+			content: '<div>信息窗体</div>', //信息窗体的内容可以是任意html片段
+			offset: new AMap.Pixel(-20, -62)
+			});
+			var onMarkerClick = function (e) {
+			infoWindow.open(map, e.target.getPosition()); //打开信息窗体
+			//e.target就是被点击的Marker
+			}
+			maker1.on('click', onMarkerClick); //绑定click事件
+			*/
+			/*
+			//行走路线-调用高德
+			var walking = new AMap.Walking({
+			map: map,
+			panel: "panel"
+			});
+
+			let viewPath = []
+			let tmplength = pathMap.length
+			for (let i = 0; i < tmplength; i++) { let a1=pathMap[i] let a2=pathMap[(i + 1) %
+				tmplength] //viewpath.push(a2) //根据起终点坐标规划步行路线 //准备改的部分 tag='ready to change' walking.search([a1.lng,
+				a1.lat], [a2.lng, a2.lat], function (status, result) { //console.log(result) if (status==='complete' ) {
+				if (result.routes && result.routes.length) { if (result.routes[0] in viewPath) {} else {
+				viewPath=[] ///routeLine for (let j=0; j < result.routes[0].steps.length; j++) { let
+				tmp_routes=result.routes[0].steps[j].path for (let k=0, lenk=tmp_routes.length; k < lenk; k++) {
+				viewPath.push([tmp_routes[k].lng, tmp_routes[k].lat]) } } //将路线显示到地图上 var routeLine=new AMap.Polyline({
+				path: viewPath, showDir: true, strokeColor: '#00ffff' , // 线颜色 strokeWeight: 10 // 线宽 }) //添加到图层上
+				map.add(routeLine) map.setFitView() } } log.success('绘制步行路线完成') } else { log.error('步行路线数据查询失败' +
+				result) } }) } */ 
+			</div> 
+		
+</body>
+</html>

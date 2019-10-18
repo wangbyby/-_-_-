@@ -6,15 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>数据结构课设</title>
-
-
-
         <!-- 导入jquery -->
         <script src=" http://127.0.0.1:5000/get_file/jquery-3.4.1.min.js"> </script>
         <!-- 导入算法 -->
         <script src="http://127.0.0.1:5000/get_file/datastruct_TSP.js"></script>
-
-
         <!-- 高德地图api -->
         <script src="https://webapi.amap.com/maps?v=1.4.15&key=6a159ce0aac34e52264dcc63bb7bfeca&plugin=AMap.Walking""></script>
         <script src=" https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"> </script> <script
@@ -24,7 +19,6 @@
             #container {
                 width: 900px;
                 height: 900px;
-
             }
         </style>
     </head>
@@ -32,7 +26,6 @@
     <body>
         <div>
             <div>
-
                 <div>
                     <input id="addMarker" type="checkbox" value="添加点标记">添加点标记 <br>
                 </div>
@@ -46,14 +39,10 @@
                 </div>
             </div>
             <div>
-
                 经纬度<input type="text" readonly="true" id="lnglat">
             </div>
-
         </div>
         <div id="container">
-
-
         </div>
         <div id="panel"></div>
         <script text="text/javascript">
@@ -76,6 +65,7 @@
                 let markerChecked = $('#addMarker').prop(
                     "checked") //let markerChecked = $(':checkbox')[0].checked
 
+                //用户选择地点
                 if (markerChecked) {
                     //根据地址新建点标记
                     let newMarker = new AMap.Marker({
@@ -85,20 +75,15 @@
                     //设置新建marker的文本内容
                     newMarker.setLabel({
                         offset: new AMap.Pixel(20, 20),
-                        /*
-                        content: "<div class='info'>第" + positionArr.length + "个点"+"经纬度"+ e.lnglat.getLng() + ',' + e.lnglat.getLat()+ '<br>' +
+
+                        content: "<div class='info'>第" + positionArr.length + "个点" + "经纬度" + e.lnglat
+                            .getLng() + ',' + e.lnglat.getLat() + '<br>' +
                             '停留时间(分钟)<input type="number" name="" id=""> </div>', //设置文本标注内容
-                            */
-                        content: "<div class='info'>第" + positionArr.length + "个点<br>" + "经纬度" + e
-                            .lnglat.getLng() + ',' + e.lnglat.getLat() +
-                            '</div>',
                         direction: 'right' //设置文本标注方位
                     })
                     map.add(newMarker)
                     positionArr.push([e.lnglat.getLng(), e.lnglat.getLat()])
                     markerArr.push(newMarker)
-
-
                 }
             });
 
@@ -112,10 +97,13 @@
             let distanceMartix = [] //点之间距离矩阵
             //计算各个点之间的距离
             $('#computedistance').click(function () {
+                $('#addMarker').prop("checked", false) //关闭添加点
+
                 //开始时间
                 var st = $("#starttime").val()
                 console.log("开始时间", st)
-
+                $('#addMarker').prop(
+                    "unchecked")
 
                 var stlabel = $(".info input")
                 var stvalue = []
@@ -143,7 +131,10 @@
                 //实际算法计算部分
                 let graph = new Graph()
                 graph.info = distanceMartix
+
+                //TSP 旅行商问题
                 let result = TSP(graph, 0)
+
                 console.log("result=", result)
 
                 //显示形式路径
@@ -165,7 +156,7 @@
                 map.add(polyline); 
                 */
                 //显示形式路径 end
-                
+
 
                 //构造矩阵
                 $.ajax({
@@ -211,8 +202,8 @@
                                 matrix[i][val[2][j]] = dis
                             }
                         }
-                        
-                        
+
+
                         //从TSPAth(经纬度数组)计算离其距离最近数组
                         var finnalArr = []
                         for (var i = 0, n = TSPAth.length; i < n; i++) {
@@ -229,20 +220,20 @@
                         }
                         console.log("finnal ", finnalArr)
 
-                        //已知点
-                        //换成dijkstra算法 search比较好
 
-            
+                        //下一步更换为 A*算法 tag:want to change
                         //查询+绘图
                         //显示searchpath
                         var searchPath = []
-                        for (var i = 0, n = finnalArr.length; i < n-1 ; i++) {
-                            searchPath.push.apply(searchPath,  Dijkstra(matrix, finnalArr[i], finnalArr[(i+1)]) )
+                        for (var i = 0, n = finnalArr.length; i < n - 1; i++) {
+                            //查询实际路径
+                            searchPath.push.apply(searchPath, Dijkstra(matrix, finnalArr[i],
+                                finnalArr[(i + 1)]))
                             console.log("search  every path = ", searchPath)
                         }
-                         //tag: ready to change end
+                        //tag: ready to change end
                         console.log("search path = ", searchPath)
-
+                        //显示实际路径
                         var searchPolyline = []
                         for (var i = 0, n = searchPath.length; i < n; i++) {
                             var tmp = data[searchPath[i]]
@@ -266,9 +257,6 @@
                 var b = new AMap.LngLat(l2[0], l2[1])
                 return Math.round(a.distance(b))
             }
-
-            
         </script>
-
     </body>
 </html>
