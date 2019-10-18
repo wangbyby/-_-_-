@@ -131,7 +131,7 @@
                 //实际算法计算部分
                 let graph = new Graph()
                 graph.info = distanceMartix
-
+                
                 //TSP 旅行商问题
                 let result = TSP(graph, 0)
 
@@ -200,9 +200,10 @@
                                 var dis = computeDis(a1, b)
                                 //console.log("val[2][j]",val[2][j])
                                 matrix[i][val[2][j]] = dis
+                                matrix[val[2][j]][i] = dis
                             }
                         }
-
+                        console.log("my matrix",matrix)
 
                         //从TSPAth(经纬度数组)计算离其距离最近数组
                         var finnalArr = []
