@@ -226,10 +226,27 @@
                         //查询+绘图
                         //显示searchpath
                         var searchPath = []
+                        //显示时间信息
+                        var timeInfo = {}
                         for (var i = 0, n = finnalArr.length; i < n - 1; i++) {
                             //查询实际路径
-                            searchPath.push.apply(searchPath, Dijkstra(matrix, finnalArr[i],
-                                finnalArr[(i + 1)]))
+                            var resSearch = Dijkstra(matrix, finnalArr[i], finnalArr[(i + 1)])
+                            timeInfo[[finnalArr[i], finnalArr[(i + 1)]]] = resSearch['weight']
+                            console.log('time=',resSearch['weight'])
+                            //显示时间信息
+                            var index = parseInt(resSearch['path'].length/2)
+                            index =  resSearch['path'][index]
+                            var m1 = new AMap.Marker({
+                                map: map,
+                                draggable: true,
+                                position: new AMap.LngLat(data[index][0], data[index][1])
+                            });
+                            m1.setLabel({
+                                content: '<p>花费时间:' + resSearch['weight']  +
+                                    ' min</p>',
+                                direction: 'middle' //设置文本标注方位
+                            })
+                            searchPath.push.apply(searchPath, resSearch['path'])
                             console.log("search  every path = ", searchPath)
                         }
                         //tag: ready to change end
@@ -254,9 +271,7 @@
             })
 
             function computeDis(l1, l2) {
-                var a = new AMap.LngLat(l1[0], l1[1])
-                var b = new AMap.LngLat(l2[0], l2[1])
-                return Math.round(a.distance(b))
+                return AMap.GeometryUtil.distance(l1, l2);
             }
         </script>
     </body>
