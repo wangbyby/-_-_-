@@ -16,15 +16,33 @@
             type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
         <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
         <style>
+        
             #container {
-                width: 900px;
-                height: 900px;
+                height: 1000px;
+                width: 1000px;
+            }
+
+            .info {
+                padding: .75rem 1.25rem;
+                margin-bottom: 1rem;
+                border-radius: .25rem;
+                position: fixed;
+                top: 1rem;
+                background-color: white;
+                width: auto;
+                min-width: 22rem;
+                border-width: 0;
+                right: 1rem;
+                box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
             }
         </style>
     </head>
 
     <body>
-        <div>
+        <!-- <div>
+                经纬度<input type="text" readonly="true" id="lnglat">
+            </div>  -->
+        <div class="info">
             <div>
                 <div>
                     <input id="addMarker" type="checkbox" value="添加点标记">添加点标记 <br>
@@ -37,12 +55,14 @@
                 <div>
                     出发时间<input type="time" name="" id="starttime">
                 </div>
+                <div>
+                    结束时间<input type="time" name="" id="endtime">
+                </div>
             </div>
-            <div>
-                经纬度<input type="text" readonly="true" id="lnglat">
-            </div>
+
         </div>
         <div id="container">
+
         </div>
         <div id="panel"></div>
         <script text="text/javascript">
@@ -58,7 +78,7 @@
             });
             //为地图注册click事件获取鼠标点击出的经纬度坐标
             map.on('click', function (e) {
-                document.getElementById("lnglat").value = e.lnglat.getLng() + ',' + e.lnglat.getLat()
+                //document.getElementById("lnglat").value = e.lnglat.getLng() + ',' + e.lnglat.getLat()
 
                 //如果添加标记
 
@@ -70,16 +90,14 @@
                     //根据地址新建点标记
                     let newMarker = new AMap.Marker({
                         position: [e.lnglat.getLng(), e.lnglat.getLat()],
-                        offset: new AMap.Pixel(-13, -30)
+                        //offset: new AMap.Pixel(-13, -30)
                     })
                     //设置新建marker的文本内容
                     newMarker.setLabel({
                         offset: new AMap.Pixel(20, 20),
-
-                        content: "<div class='info'>第" + positionArr.length + "个点" + "经纬度" + e.lnglat
-                            .getLng() + ',' + e.lnglat.getLat() + '<br>' +
-                            '停留时间(分钟)<input type="number" name="" id=""> </div>', //设置文本标注内容
-                        direction: 'right' //设置文本标注方位
+                        content: "<div >第" + positionArr.length + "个点" + 
+                            '</br>停留时间(分钟)<input type="number" name="" id=""> </div>', //设置文本标注内容
+                        direction: 'middle' //设置文本标注方位
                     })
                     map.add(newMarker)
                     positionArr.push([e.lnglat.getLng(), e.lnglat.getLat()])
@@ -131,7 +149,7 @@
                 //实际算法计算部分
                 let graph = new Graph()
                 graph.info = distanceMartix
-                
+
                 //TSP 旅行商问题
                 let result = TSP(graph, 0)
 
@@ -203,7 +221,7 @@
                                 matrix[val[2][j]][i] = dis
                             }
                         }
-                        console.log("my matrix",matrix)
+                        console.log("my matrix", matrix)
 
                         //从TSPAth(经纬度数组)计算离其距离最近数组
                         var finnalArr = []
@@ -232,17 +250,17 @@
                             //查询实际路径
                             var resSearch = Dijkstra(matrix, finnalArr[i], finnalArr[(i + 1)])
                             timeInfo[[finnalArr[i], finnalArr[(i + 1)]]] = resSearch['weight']
-                            console.log('time=',resSearch['weight'])
+                            console.log('time=', resSearch['weight'])
                             //显示时间信息
-                            var index = parseInt(resSearch['path'].length/2)
-                            index =  resSearch['path'][index]
+                            var index = parseInt(resSearch['path'].length / 2)
+                            index = resSearch['path'][index]
                             var m1 = new AMap.Marker({
                                 map: map,
                                 draggable: true,
                                 position: new AMap.LngLat(data[index][0], data[index][1])
                             });
                             m1.setLabel({
-                                content: '<p>花费时间:' + resSearch['weight']  +
+                                content: '<p>花费时间:' + resSearch['weight'] +
                                     ' min</p>',
                                 direction: 'middle' //设置文本标注方位
                             })
@@ -275,4 +293,5 @@
             }
         </script>
     </body>
+
 </html>
