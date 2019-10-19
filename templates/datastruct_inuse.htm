@@ -28,7 +28,7 @@
                 border-radius: .25rem;
                 position: fixed;
                 top: 1rem;
-                background-color: white;
+                background-color: #ffffff;
                 width: auto;
                 min-width: 22rem;
                 border-width: 0;
@@ -59,12 +59,13 @@
                     结束时间<input type="time" name="" id="endtime">
                 </div>
             </div>
-
+            <div id="panel"></div> 
+            <!-- 时间信息 -->
         </div>
         <div id="container">
 
         </div>
-        <div id="panel"></div>
+        
         <script text="text/javascript">
             let markerArr = [] //点标记数组
             let positionArr = [] //经纬度数组
@@ -239,51 +240,46 @@
                         }
                         console.log("finnal ", finnalArr)
 
-
-                        //下一步更换为 A*算法 tag:want to change
-                        //查询+绘图
-                        //显示searchpath
-                        var searchPath = []
-                        //显示时间信息
-                        var timeInfo = {}
-                        for (var i = 0, n = finnalArr.length; i < n - 1; i++) {
-                            //查询实际路径
-                            var resSearch = Dijkstra(matrix, finnalArr[i], finnalArr[(i + 1)])
-                            timeInfo[[finnalArr[i], finnalArr[(i + 1)]]] = resSearch['weight']
-                            console.log('time=', resSearch['weight'])
-                            //显示时间信息
-                            var index = parseInt(resSearch['path'].length / 2)
-                            index = resSearch['path'][index]
-                            var m1 = new AMap.Marker({
-                                map: map,
-                                draggable: true,
-                                position: new AMap.LngLat(data[index][0], data[index][1])
-                            });
-                            m1.setLabel({
-                                content: '<p>花费时间:' + resSearch['weight'] +
-                                    ' min</p>',
-                                direction: 'middle' //设置文本标注方位
-                            })
-                            searchPath.push.apply(searchPath, resSearch['path'])
-                            console.log("search  every path = ", searchPath)
-                        }
-                        //tag: ready to change end
-                        console.log("search path = ", searchPath)
-                        //显示实际路径
-                        var searchPolyline = []
-                        for (var i = 0, n = searchPath.length; i < n; i++) {
-                            var tmp = data[searchPath[i]]
-                            searchPolyline.push([tmp[0], tmp[1]])
-                        }
-                        var routeLine2 = new AMap.Polyline({
-                            path: searchPolyline,
-                            showDir: true,
-                            strokeColor: '#000fff', // 线颜色
-                            strokeWeight: 10 // 线宽
+                        
+                        $.ajax({
+                            type:'post',
+                            dataType:'json',
+                            data:JSON.stringify(finnalArr),
+                            url:"http://127.0.0.1:5000/data",
+                            success:function (data2, textStatus, jqxhr){
+                                console.log("data from falsk = ", data2)
+                                var pol_line = []
+                                for(var i=0;i<data2[0].length;i++){
+                                    tmp = data2[0][i]
+                                    pol_line.push([data[tmp][0],data[tmp][1]])
+                                }
+                                for(var index in data2[1]){
+                                    var m1 = new AMap.Marker({
+                                        map: map,
+                                        draggable: true,
+                                        position: new AMap.LngLat(data[index][0], data[index][1])
+                                    });
+                                    console.log("position = ",data[index][0], data[index][1])
+                                    m1.setLabel({
+                                        content: '<p>花费时间:' + data2[1][index] +
+                                            ' min</p>',
+                                        direction: 'middle' //设置文本标注方位
+                                    })
+                                }
+                                var routeLine2 = new AMap.Polyline({
+                                    path: pol_line,
+                                    showDir: true,
+                                    strokeColor: '#ffff00', // 线颜色
+                                    strokeWeight: 10 // 线宽
+                                })
+                                //添加到图层上
+                                map.add(routeLine2)
+                                console.log(pol_line)
+                            }
                         })
-                        //添加到图层上
-                        map.add(routeLine2)
-
+                        
+                    
+                        
                     }
                 })
             })

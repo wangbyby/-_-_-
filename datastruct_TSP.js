@@ -175,7 +175,7 @@ function Dijkstra(m, start, end) { //Dijkstra
     for(var i=0; i<resPath.length - 1;i++){
         weight += m[resPath[i]][resPath[i+1]]
     }
-    weight = Math.ceil(weight/60)
+    
     return {'path':resPath, 'weight':weight } //此时weight单位为 min(分钟)
 }
 
