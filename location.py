@@ -88,7 +88,8 @@ class Graph:
         for i in n_list:
             tmp = self.dijkstra(points[i],points[i+1])
             search_res_path.extend(tmp[0])
-            search_res_time[tmp[0][int(len(tmp)/2)]] = tmp[1]
+
+            search_res_time[tmp[0][-1]] = tmp[1]
         return search_res_path,search_res_time
     def dijkstra(self, start,end):
         q = minQueue()
@@ -106,6 +107,22 @@ class Graph:
                     pre[i] = u
                     q.push_back(i)
         return self.get_path(pre, end)
+
+    def get_path(self, parent={},end = 0):
+        u = end
+        weight = 0
+        path_a = [end]
+        while parent.get(u) != None:
+            weight += float(self.martix[u][parent.get(u)])
+            u = parent.get(u)
+            path_a.append(u)
+        path_a.reverse()
+        return path_a, math.ceil(weight / 60)
+    def adj(self, u): #返回u的邻接
+        with open('location.json') as f:
+            self.location_data = json.load(f)
+
+        return self.location_data[str(u)][2]
     def Astar(self, start, end):
         # 返回一条从start到end的路径,以及路径花费的时间
         len_list = range(len(self.martix))
@@ -143,21 +160,6 @@ class Graph:
                         if float(self.martix[u][v]) + g_func[u] < g_func[v]:
                             g_func[v] = float(self.martix[u][v]) + g_func[u]
         return [],-1
-    def get_path(self, parent={},end = 0):
-        u = end
-        weight = 0
-        path_a = [end]
-        while parent.get(u) != None:
-            weight += float(self.martix[u][parent.get(u)])
-            u = parent.get(u)
-            path_a.append(u)
-        path_a.reverse()
-        return path_a, math.ceil(weight / 60)
-    def adj(self, u): #返回u的邻接
-        with open('location.json') as f:
-            self.location_data = json.load(f)
-
-        return self.location_data[str(u)][2]
 if __name__ == '__main__':
     g = Graph()
     g.read_from_file()

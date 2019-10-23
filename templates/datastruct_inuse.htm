@@ -16,7 +16,6 @@
             type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
         <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
         <style>
-        
             #container {
                 height: 1000px;
                 width: 1000px;
@@ -34,6 +33,10 @@
                 border-width: 0;
                 right: 1rem;
                 box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
+            }
+
+            .staytime {
+                width: 80px;
             }
         </style>
     </head>
@@ -59,13 +62,13 @@
                     结束时间<input type="time" name="" id="endtime">
                 </div>
             </div>
-            <div id="panel"></div> 
+            <div id="timeblock"></div>
             <!-- 时间信息 -->
         </div>
         <div id="container">
 
         </div>
-        
+
         <script text="text/javascript">
             let markerArr = [] //点标记数组
             let positionArr = [] //经纬度数组
@@ -80,12 +83,9 @@
             //为地图注册click事件获取鼠标点击出的经纬度坐标
             map.on('click', function (e) {
                 //document.getElementById("lnglat").value = e.lnglat.getLng() + ',' + e.lnglat.getLat()
-
                 //如果添加标记
-
                 let markerChecked = $('#addMarker').prop(
                     "checked") //let markerChecked = $(':checkbox')[0].checked
-
                 //用户选择地点
                 if (markerChecked) {
                     //根据地址新建点标记
@@ -96,8 +96,8 @@
                     //设置新建marker的文本内容
                     newMarker.setLabel({
                         offset: new AMap.Pixel(20, 20),
-                        content: "<div >第" + positionArr.length + "个点" + 
-                            '</br>停留时间(分钟)<input type="number" name="" id=""> </div>', //设置文本标注内容
+                        content: "<div >第" + positionArr.length + "个点" +
+                            '</br>停留时间(分钟)<input class="staytime" type="number" name="" ></br></div>', //设置文本标注内容
                         direction: 'middle' //设置文本标注方位
                     })
                     map.add(newMarker)
@@ -118,174 +118,234 @@
             $('#computedistance').click(function () {
                 $('#addMarker').prop("checked", false) //关闭添加点
 
-                //开始时间
-                var st = $("#starttime").val()
-                console.log("开始时间", st)
-                $('#addMarker').prop(
-                    "unchecked")
+                //时间
+                var st = String($("#starttime").val()).split(":")
+                var et = String($("#endtime").val()).split(":")
+                var std = new Date()
+                std.setHours(st[0], st[1])
+                var etd = new Date()
+                etd.setHours(et[0], et[1])
+                var starttimeMillSecond = std.getTime()
 
-                var stlabel = $(".info input")
-                var stvalue = []
-                for (let i = 0, len = stlabel.length; i < len; i++) {
-                    stvalue.push(0 | stlabel[i].value) // string转number
-                }
-                //console.log("the info", stvalue)
-                $('#addMarker').attr("checked", false)
-                if (positionArr.length <= 1) {
-                    alert("没必要呀")
+
+                if (std >= etd) {
+                    alert("输入时间错误")
                 } else {
-                    for (let i = 0; i < positionArr.length; i++) {
-                        distanceMartix[i] = new Array(positionArr.length)
+
+                    $('#addMarker').prop(
+                        "unchecked")
+                    var stlabel = $("input.staytime")
+                    var stayTime = []
+                    var totaltime = 0
+                    for (let i = 0, len = stlabel.length; i < len; i++) {
+                        stayTime.push(0 | stlabel[i].value) // string转number
+
                     }
-                    for (let i = 0; i < positionArr.length; i++) {
-                        for (let j = i; j < positionArr.length; j++) {
-                            var tmp = AMap.GeometryUtil.distance(positionArr[i], positionArr[j])
-                            distanceMartix[i][j] = tmp
-                            distanceMartix[j][i] = tmp
+                    console.log("time info", stayTime)
+
+                    $('#addMarker').attr("checked", false)
+                    if (positionArr.length <= 1) {
+                        alert("请选择更多的点")
+                    } else {
+                        for (let i = 0; i < positionArr.length; i++) {
+                            distanceMartix[i] = new Array(positionArr.length)
+                        }
+                        for (let i = 0; i < positionArr.length; i++) {
+                            for (let j = i; j < positionArr.length; j++) {
+                                var tmp = AMap.GeometryUtil.distance(positionArr[i], positionArr[j])
+                                distanceMartix[i][j] = tmp
+                                distanceMartix[j][i] = tmp
+                            }
                         }
                     }
-                }
-                //console.log("distance矩阵",distanceMartix)
+                    //console.log("distance矩阵",distanceMartix)
 
-                //实际算法计算部分
-                let graph = new Graph()
-                graph.info = distanceMartix
+                    //实际算法计算部分
+                    let graph = new Graph()
+                    graph.info = distanceMartix
 
-                //TSP 旅行商问题
-                let result = TSP(graph, 0)
+                    //TSP 旅行商问题
+                    let result = TSP(graph, 0)
 
-                console.log("result=", result)
+                    console.log("result=", result)
 
-                //显示形式路径
-                let TSPAth = [] //TSPAth为结果经纬度顺序
-                for (var i = 0; i < result.length; i++) {
-                    var index = result[i]
-                    TSPAth.push(positionArr[index])
-                }
-                //console.log("position = ",positionArr)
-                console.log("TSPAth", TSPAth)
-                //显示折线
-                /*
-                var polyline = new AMap.Polyline({
-                    path: TSPAth, //设置线覆盖物路径
-                    showDir: true,
-                    strokeColor: '#f01a1a', // 线颜色
-                    strokeWeight: 10 // 线宽
-                });
-                map.add(polyline); 
-                */
-                //显示形式路径 end
+                    //显示形式路径
+                    let TSPAth = [] //TSPAth为结果经纬度顺序
+                    for (var i = 0; i < result.length; i++) {
+                        var index = result[i]
+                        TSPAth.push(positionArr[index])
+                    }
+                    //console.log("position = ",positionArr)
+                    console.log("TSPAth", TSPAth)
+                    //显示折线
+                    /*
+                    var polyline = new AMap.Polyline({
+                        path: TSPAth, //设置线覆盖物路径
+                        showDir: true,
+                        strokeColor: '#f01a1a', // 线颜色
+                        strokeWeight: 10 // 线宽
+                    });
+                    map.add(polyline); 
+                    */
+                    //显示形式路径 end
 
-
-                //构造矩阵
-                $.ajax({
-                    type: "post",
-                    dataType: "json",
-                    url: "http://127.0.0.1:5000/query", //请求后端传输数据
-                    data: {
-                        params: JSON.stringify()
-                    },
-                    success: function (data, textStatus, jqxhr) {
-
-                        var lenJson = Object.keys(data).length
-                        //console.log("lendata",lenJson)
-                        var matrix = new Array()
-                        for (let i = 0; i < lenJson; i++) {
-                            matrix[i] = []
-                            for (let j = 0; j < lenJson; j++) {
-                                matrix[i][j] = inf
-                            }
-                        }
-
-                        for (var i in data) {
-                            const val = data[i]
-                            /*
-                            var m1 = new AMap.Marker({
-                                map: map,
-                                draggable: true,
-                                position: new AMap.LngLat(val[0], val[1])
-                            });
-                            m1.setLabel({
-                                content: '<div>' + i +
-                                    '</div>',
-                                direction: 'right' //设置文本标注方位
-                            })
-                            */
-                            for (var j = 0; j < val[2].length; j++) {
-                                var a1 = [val[0], val[1]]
-                                var a2 = data[val[2][j]]
-                                var b = [a2[0], a2[1]]
-                                //console.log("a, b=",a1,b)
-                                var dis = computeDis(a1, b)
-                                //console.log("val[2][j]",val[2][j])
-                                matrix[i][val[2][j]] = dis
-                                matrix[val[2][j]][i] = dis
-                            }
-                        }
-                        console.log("my matrix", matrix)
-
-                        //从TSPAth(经纬度数组)计算离其距离最近数组
-                        var finnalArr = []
-                        for (var i = 0, n = TSPAth.length; i < n; i++) {
-                            var j = 0
-                            var minDis = computeDis([data[0][0], data[0][1]], TSPAth[i])
-                            for (var k in data) {
-                                var tmppDis = computeDis([data[k][0], data[k][1]], TSPAth[i])
-                                if (minDis > tmppDis) {
-                                    minDis = tmppDis
-                                    j = 0 | k //保证j为数字
+                    //构造矩阵
+                    $.ajax({
+                        type: "post",
+                        dataType: "json",
+                        url: "http://127.0.0.1:5000/query", //请求后端传输数据
+                        data: {
+                            params: JSON.stringify()
+                        },
+                        success: function (data, textStatus, jqxhr) {
+                            var lenJson = Object.keys(data).length
+                            //console.log("lendata",lenJson)
+                            var matrix = new Array()
+                            for (let i = 0; i < lenJson; i++) {
+                                matrix[i] = []
+                                for (let j = 0; j < lenJson; j++) {
+                                    matrix[i][j] = inf
                                 }
                             }
-                            finnalArr.push(j)
-                        }
-                        console.log("finnal ", finnalArr)
-
-                        
-                        $.ajax({
-                            type:'post',
-                            dataType:'json',
-                            data:JSON.stringify(finnalArr),
-                            url:"http://127.0.0.1:5000/data",
-                            success:function (data2, textStatus, jqxhr){
-                                console.log("data from falsk = ", data2)
-                                var pol_line = []
-                                for(var i=0;i<data2[0].length;i++){
-                                    tmp = data2[0][i]
-                                    pol_line.push([data[tmp][0],data[tmp][1]])
-                                }
-                                for(var index in data2[1]){
-                                    var m1 = new AMap.Marker({
-                                        map: map,
-                                        draggable: true,
-                                        position: new AMap.LngLat(data[index][0], data[index][1])
-                                    });
-                                    console.log("position = ",data[index][0], data[index][1])
-                                    m1.setLabel({
-                                        content: '<p>花费时间:' + data2[1][index] +
-                                            ' min</p>',
-                                        direction: 'middle' //设置文本标注方位
-                                    })
-                                }
-                                var routeLine2 = new AMap.Polyline({
-                                    path: pol_line,
-                                    showDir: true,
-                                    strokeColor: '#ffff00', // 线颜色
-                                    strokeWeight: 10 // 线宽
+                            for (var i in data) {
+                                const val = data[i]
+                                /*
+                                var m1 = new AMap.Marker({
+                                    map: map,
+                                    draggable: true,
+                                    position: new AMap.LngLat(val[0], val[1])
+                                });
+                                m1.setLabel({
+                                    content: '<div>' + i +
+                                        '</div>',
+                                    direction: 'right' //设置文本标注方位
                                 })
-                                //添加到图层上
-                                map.add(routeLine2)
-                                console.log(pol_line)
+                                */
+                                for (var j = 0; j < val[2].length; j++) {
+                                    var a1 = [val[0], val[1]]
+                                    var a2 = data[val[2][j]]
+                                    var b = [a2[0], a2[1]]
+
+                                    var dis = computeDis(a1, b)
+
+                                    matrix[i][val[2][j]] = dis
+                                    matrix[val[2][j]][i] = dis
+                                }
                             }
-                        })
-                        
-                    
-                        
-                    }
-                })
+                            console.log("my matrix", matrix)
+                            //从TSPAth(经纬度数组)计算离其距离最近数组
+                            var finnalArr = []
+                            for (var i = 0, n = TSPAth.length; i < n; i++) {
+                                var j = 0
+                                var minDis = computeDis([data[0][0], data[0][1]], TSPAth[i])
+                                for (var k in data) {
+                                    var tmppDis = computeDis([data[k][0], data[k][1]], TSPAth[i])
+                                    if (minDis > tmppDis) {
+                                        minDis = tmppDis
+                                        j = 0 | k //保证j为数字
+                                    }
+                                }
+                                finnalArr.push(j)
+                            }
+                            console.log("finnal ", finnalArr)
+                            $.ajax({
+                                type: 'post',
+                                dataType: 'json',
+                                data: JSON.stringify(finnalArr),
+                                url: "http://127.0.0.1:5000/data",
+                                success: function (data2, textStatus, jqxhr) {
+                                    console.log("data2 from server = ", data2)
+                                    var pol_line = []
+                                    for (var i = 0; i < data2[0].length; i++) {
+                                        tmp = data2[0][i]
+                                        pol_line.push([data[tmp][0], data[tmp][1]])
+                                    }
+
+
+
+                                    $("#timeblock").empty()
+
+                                    var resultindex = 0
+                                    for (var index in data2[1]) {
+                                        /*
+                                        var m1 = new AMap.Marker({
+                                            map: map,
+                                            draggable: true,
+                                            position: new AMap.LngLat(data[
+                                                index][0], data[index][1])});
+                                        console.log("position = ", data[index][0], data[
+                                            index][1])
+                                        m1.setLabel({
+                                            content: '<p>花费时间:' + data2[1][
+                                                    index
+                                                ] +
+                                                ' min 到达时间:'+std.getHours()+":"+std.getMinutes()+'</p>',
+                                            direction: 'middle' //设置文本标注方位
+                                        })  */
+                                        std.setMilliseconds(std.getMilliseconds() +
+                                            stayTime[result[
+                                                resultindex]] * 60 * 1000)
+                                        totaltime += stayTime[result[
+                                            resultindex]] * 60 * 1000
+                                        var table2 =
+                                            '<table border="1"> <tr> <td>点' +
+                                            result[
+                                                resultindex] +
+                                            '</td> <td>--></td><td>点' + result[
+                                                resultindex + 1] + '</td> </tr>' +
+                                            '<tr><td>' + std.getHours() + " : " +
+                                            checkTime(std.getMinutes()) +
+                                            '</td><td>' + data2[1][
+                                                index
+                                            ]
+                                        std.setMilliseconds(std.getMilliseconds() +
+                                            data2[1][index] * 60 * 1000)
+                                        totaltime += data2[1][index] * 60 * 1000
+                                        table2 += 'min</td><td>' + std.getHours() +
+                                            " : " + checkTime(std.getMinutes()) +
+                                            '</td></tr></table>'
+
+
+
+                                        console.log("totaltime", totaltime)
+                                        $("#timeblock").append('<li>' + table2 +
+                                            '</li>')
+                                        resultindex++
+                                    }
+
+
+
+                                    var routeLine2 = new AMap.Polyline({
+                                        path: pol_line,
+                                        showDir: true,
+                                        strokeColor: '#000fff', // 线颜色
+                                        strokeWeight: 10 // 线宽
+                                    })
+                                    //添加到图层上
+                                    map.add(routeLine2)
+                                    console.log("starttime", starttimeMillSecond)
+                                    console.log("totaltime", totaltime)
+                                    if (starttimeMillSecond + totaltime > etd
+                                        .getTime()) {
+                                        alert("超过了结束时间,请更改停留时间,但仍然显示路径")
+                                    }
+                                }
+                            })
+                        }
+
+                    })
+                }
             })
 
             function computeDis(l1, l2) {
                 return AMap.GeometryUtil.distance(l1, l2);
+            }
+
+            function checkTime(i) {
+                if (i < 10) {
+                    i = "0" + i
+                }
+                return i
             }
         </script>
     </body>
