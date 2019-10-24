@@ -1,7 +1,6 @@
-
+import time
 import json
 import math
-# import requests
 INF = 100000
 class minQueue:
     queue = []
@@ -121,7 +120,6 @@ class Graph:
     def adj(self, u): #返回u的邻接
         with open('location.json') as f:
             self.location_data = json.load(f)
-
         return self.location_data[str(u)][2]
     def Astar(self, start, end):
         # 返回一条从start到end的路径,以及路径花费的时间
@@ -148,21 +146,40 @@ class Graph:
             closed.add(u)
             # print("closed = ",closed)
             for v in self.adj(u):
+                gnmi = float(self.martix[u][v]) + g_func[u] # g(v)
+                h_func[v] = float(self.martix[u][v])  # h(v)#没有好的启发函数
+                fnmi = gnmi + h_func[v] #实际上退化为 dijkstra算法
                 if v not in closed: #v不在closed里面
-                    parent[v] = u
                     if v not in open_q.queue: #v不在open里面
-                        h_func[v] = 0
-                        # h_func[v] = float(self.martix[u][v]) #h(v)#没有好的启发函数
-                        g_func[v] = float(self.martix[u][v]) + g_func[u] # g(v)
-                        open_q.cost[v] = g_func[v]+h_func[v] #实际上退化为 dijkstra算法
+                        open_q.cost[v] = fnmi
                         open_q.push_back(v)
+                        parent[v] = u
                     else:
-                        if float(self.martix[u][v]) + g_func[u] < g_func[v]:
-                            g_func[v] = float(self.martix[u][v]) + g_func[u]
+                        if gnmi < g_func[v]:
+                            g_func[v] = gnmi
+                            parent[v] = u
+                else:
+
+                    if gnmi < g_func[v]:
+                        closed.remove(v)
+                        g_func[v] = gnmi
+                        open_q.cost[v] =fnmi
+                        open_q.push_back(v)
+                        parent[v] = u
         return [],-1
-if __name__ == '__main__':
-    g = Graph()
-    g.read_from_file()
-    res = g.search([31,24,70,31])
-    print(res)
-    # ([36, 35, 30, 29, 28, 41, 42, 43, 44, 23, 22, 22, 45, 46, 63, 64, 70, 71, 72, 38, 37, 36], [10, 16])
+    def Astar_pro(self,start,end):
+        pass
+# if __name__ == '__main__':
+#     a,b = 30,50
+#     g = Graph()
+#     g.read_from_file()
+#     start = time.time()
+#     res = g.Astar(a,b)
+#     end = time.time()
+#     print("A* time",end-start)
+#     print(res)
+#     start = time.time()
+#     res = g.dijkstra(a,b)
+#     end = time.time()
+#     print("dijkstra time", end - start)
+#     print(res)
