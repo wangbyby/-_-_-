@@ -20,7 +20,6 @@
                 height: 1000px;
                 width: 1000px;
             }
-
             .info {
                 padding: .75rem 1.25rem;
                 margin-bottom: 1rem;
@@ -34,25 +33,27 @@
                 right: 1rem;
                 box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
             }
-
             .staytime {
                 width: 80px;
             }
         </style>
     </head>
-
     <body>
         <!-- <div>
                 经纬度<input type="text" readonly="true" id="lnglat">
             </div>  -->
         <div class="info">
+            <!-- <div>
+                <input type="checkbox" name="" id="">发送邮件
+                <input type="email" name="" id=""> <br>
+                <input type="email" name="" id="">
+            </div> -->
             <div>
                 <div>
                     <input id="addMarker" type="checkbox" value="添加点标记">添加点标记 <br>
                 </div>
                 <div>
                     <button id="delMarker"> 删除点标记</button> <br>
-
                     <button id="computedistance">计算点之间的距离</button> <br>
                 </div>
                 <div>
@@ -62,13 +63,10 @@
                     结束时间<input type="time" name="" id="endtime">
                 </div>
             </div>
-            <div id="timeblock"></div>
-            <!-- 时间信息 -->
+            <div id="timeblock"></div> <!-- 时间信息 -->
         </div>
         <div id="container">
-
         </div>
-
         <script text="text/javascript">
             let bjutBound = [
                 [116.477522, 39.879334],
@@ -121,7 +119,7 @@
                     })
                     map.add(newMarker)
 
-                    if (inBjut([e.lnglat.getLng(), e.lnglat.getLat()])) {
+                    if (inBjut([e.lnglat.getLng(), e.lnglat.getLat()])) { // 在学校里
                         var tmp = new LngLatAndId()
                         tmp.lnglat = [e.lnglat.getLng(), e.lnglat.getLat()]
                         tmp.id = markerArr.length
@@ -131,7 +129,7 @@
                 }
             });
 
-            //删除点
+            //删除点 暂时有bug
             $('#delMarker').on('click', function () {
                 var e = markerArr.pop()
                 map.remove(e) //删除点
@@ -162,9 +160,9 @@
                     var stlabel = $("input.staytime")
                     var stayTime = []
                     var totaltime = 0
+                    //停留时间
                     for (let i = 0, len = stlabel.length; i < len; i++) {
                         stayTime.push(0 | stlabel[i].value) // string转number
-
                     }
                     console.log("time info", stayTime)
 
@@ -203,17 +201,6 @@
                     }
                     console.log("position = ", positionArr)
                     console.log("TSPAth", TSPAth)
-                    //显示折线
-                    /*
-                    var polyline = new AMap.Polyline({
-                        path: TSPAth, //设置线覆盖物路径
-                        showDir: true,
-                        strokeColor: '#f01a1a', // 线颜色
-                        strokeWeight: 10 // 线宽
-                    });
-                    map.add(polyline); 
-                    */
-                    //显示形式路径 end
 
                     //构造矩阵
                     $.ajax({
@@ -226,6 +213,8 @@
                         success: function (data, textStatus, jqxhr) {
                             var lenJson = Object.keys(data).length
                             //console.log("lendata",lenJson)
+
+                            //构造距离矩阵
                             var matrix = new Array()
                             for (let i = 0; i < lenJson; i++) {
                                 matrix[i] = []
@@ -235,18 +224,7 @@
                             }
                             for (var i in data) {
                                 const val = data[i]
-                                /*
-                                var m1 = new AMap.Marker({
-                                    map: map,
-                                    draggable: true,
-                                    position: new AMap.LngLat(val[0], val[1])
-                                });
-                                m1.setLabel({
-                                    content: '<div>' + i +
-                                        '</div>',
-                                    direction: 'right' //设置文本标注方位
-                                })
-                                */
+            
                                 for (var j = 0; j < val[2].length; j++) {
                                     var a1 = [val[0], val[1]]
                                     var a2 = data[val[2][j]]
@@ -276,7 +254,7 @@
                                 mapPonit[positionArr[result[i]].id] = j
                                 sendtoServer.push(j)
                             }
-
+                            //得到实际的点
                             console.log("finnal map", mapPonit)
                             console.log("finnal send to server array", sendtoServer)
                             $.ajax({
@@ -286,39 +264,46 @@
                                 url: "http://127.0.0.1:5000/data",
                                 success: function (data2, textStatus, jqxhr) {
                                     console.log("data2 from server = ", data2)
+                                    
                                     var pol_line = []
                                     for (var i = 0; i < data2[0].length; i++) {
                                         tmp = data2[0][i]
                                         pol_line.push([data[tmp][0], data[tmp][1]])
-                                    }
+                                    } //实际的路径
 
+                                    //显示时间
                                     $("#timeblock").empty()
-
+                                    var emailCon = ""
                                     for (var i = 0; i < result.length - 1; i++) {
-                                        var point1 = positionArr[result[i]].id
-                                        var point2 = positionArr[result[i + 1]].id
-                                        console.log("point1,point2",[point1,point2])
+                                        var point1 = positionArr[result[i]].id //起点
+                                        var point2 = positionArr[result[i + 1]].id //终点
+                                        console.log("point1,point2", [point1, point2])
                                         std.setMilliseconds(std.getMilliseconds() +
                                             stayTime[point1] * 60 * 1000
-                                        )
+                                        )//设置时间
+
+                                        //拼接字符串 显示时间信息在浏览器
                                         totaltime += stayTime[point1] * 60 * 1000
-                                        var str = "点" + point1 + "-->点" + point2 
-                                        var str2 =
+
+                                        var str = "<li>点" + point1 + "-->点" + point2+'</li>'
+                                        var str2 ='<li>' +
                                             std.getHours() + ":" + checkTime(std
                                                 .getMinutes()) + "-->" + data2[1][
                                                 mapPonit[point2]
-                                            ]+'min-->'
+                                            ] + 'min-->'
                                         std.setMilliseconds(std.getMilliseconds() +
                                             data2[1][mapPonit[point2]] * 60 * 1000)
-                                        totaltime += data2[1][mapPonit[point2]] * 60 *1000
-                                        str2 += std.getHours() + " : " + checkTime(std.getMinutes())
-                                        
-                                        $("#timeblock").append('<li>'+str+'</li>')
-                                        $("#timeblock").append('<li>'+str2+'</li>')
+                                        totaltime += data2[1][mapPonit[point2]] * 60 *
+                                            1000
+                                        str2 += std.getHours() + " : " + checkTime(std
+                                            .getMinutes())+ '</li>'
+                                        emailCon += str+str2
+                                        $("#timeblock").append( str )
+                                        $("#timeblock").append( str2 )
 
                                     }
                                     console.log("line=", pol_line)
-                                    var routeLine2 = new AMap.Polyline({
+                                    var routeLine2 = new AMap.Polyline({ //画线
                                         path: pol_line,
                                         showDir: true,
                                         strokeColor: '#000fff', // 线颜色
@@ -328,10 +313,28 @@
                                     map.add(routeLine2)
                                     console.log("starttime", starttimeMillSecond)
                                     console.log("totaltime", totaltime)
+                                    //判断时间
                                     if (starttimeMillSecond + totaltime > etd
                                         .getTime()) {
                                         alert("超过了结束时间,请更改停留时间,但仍然显示路径")
                                     }
+                                    //发送邮件功能
+                                    var email = prompt("发送邮件")
+                                    console.log(email)
+                                    var d = {}
+                                    d["emails"] = email
+                                    d["subject"] = "出行规划"
+                                    d["contents"] = emailCon
+                                    $.ajax({
+                                        type: "post",
+                                        dataType: "json",
+                                        url: "http://127.0.0.1:5000/email", 
+                                        data: JSON.stringify(d),
+                                        success: function (data2, textStatus,
+                                            jqxhr) {
+                                            console.log(data)
+                                        }
+                                    })
                                 }
                             })
                         }
