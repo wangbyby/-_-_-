@@ -1,4 +1,3 @@
-import time
 import json
 import math
 INF = 100000
@@ -33,7 +32,7 @@ class Graph:
     distance_file_path = "distance.json" #距离文件路径
     location_data = None #位置
 
-    #最初构造矩阵的方法, 现在没用了
+    #最初构造矩阵的方法
     #根据json文件构造二维矩阵
     # def getMatrix(self,file_path):
     #

@@ -4,6 +4,8 @@ function Result() {}
 Result.prototype.matrix = null
 Result.prototype.paths = {}
 
+
+
 function Edge() {
     this.a = ""
     this.b = ""

@@ -27,7 +27,6 @@ def data():
     res = None
     for i in request.form:
         search = json.loads(i)
-
         g = location.Graph()
         g.read_from_file()
         res = g.search(search)
@@ -35,4 +34,4 @@ def data():
     return jsonify(res)
 if __name__ == '__main__':
     app.run(debug=True)
-    print("none")
+
