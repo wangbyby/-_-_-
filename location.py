@@ -166,8 +166,7 @@ class Graph:
                         open_q.push_back(v)
                         parent[v] = u
         return [],-1
-    def Astar_pro(self,start,end):
-        pass
+
 # if __name__ == '__main__':
 #     a,b = 30,50
 #     g = Graph()

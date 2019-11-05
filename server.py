@@ -43,7 +43,9 @@ def send_email(): #发送邮件
         email = yagmail.SMTP(**email_args)
         subject = data['subject']
         contents = data['contents']
-        email.send(to=receive, subject=subject,contents=contents)
+        with open('emails.htm','w') as f:
+            f.write(contents)
+        email.send(to=receive, subject=subject,contents=[contents,'emails.htm'])
 
         return "OK"
 @app.route('/data', methods=['GET',"POST"])

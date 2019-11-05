@@ -10,7 +10,7 @@ function TSP(D) { //起点为0
         dp[i] = {}
         bridge[i] = {}
         for (j = 0; j < b; j++) {
-            dp[i][j] = INF
+            dp[i][j] = 0
             bridge[i][j] = INF
         }
     }

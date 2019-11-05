@@ -11,7 +11,7 @@
         <!-- 导入算法 -->
         <script src="http://127.0.0.1:5000/get_file/datastruct_TSP.js"></script>
         <!-- 高德地图api -->
-        <script src="https://webapi.amap.com/maps?v=1.4.15&key=6a159ce0aac34e52264dcc63bb7bfeca&plugin=AMap.Walking""></script>
+        <script src="https://webapi.amap.com/maps?v=1.4.15&key=6a159ce0aac34e52264dcc63bb7bfeca&plugin=AMap.Walking&plugin=AMap.Geocoder""></script>
         <script src=" https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"> </script> <script
             type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
         <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
@@ -68,6 +68,10 @@
         <div id="container">
         </div>
         <script text="text/javascript">
+            var geocoder = new AMap.Geocoder({
+                city: "010", //城市设为北京，默认：“全国”
+                radius: 1000 //范围，默认：500
+            });
             let bjutBound = [
                 [116.477522, 39.879334],
                 [116.483176, 39.879322],
@@ -89,7 +93,7 @@
             ]
             let markerArr = [] //点标记数组
             let positionArr = [] //经纬度数组
-
+            let lnglat_Address = new Map() // 经纬度 -> 地点
             //添加地图
             var map = new AMap.Map("container", {
                 resizeEnable: true,
@@ -111,24 +115,35 @@
                         //offset: new AMap.Pixel(-13, -30)
                     })
                     //设置新建marker的文本内容
-                    newMarker.setLabel({
-                        offset: new AMap.Pixel(20, 20),
-                        content: "<div >第" + markerArr.length + "个点" +
-                            '</br>停留时间(分钟)<input class="staytime" type="number" name="" ></br></div>', //设置文本标注内容
-                        direction: 'middle' //设置文本标注方位
-                    })
-                    map.add(newMarker)
+                    geocoder.getAddress([e.lnglat.getLng(), e.lnglat.getLat()], function(status, result) {
+                        if (status === 'complete'&&result.regeocode) {
+                            var address = result.regeocode.formattedAddress;
+                            lnglat_Address[markerArr.length] = address.slice(10,-6)
+
+                            newMarker.setLabel({
+                                offset: new AMap.Pixel(20, 20),
+                                content: "<div >第" +markerArr.length+"个点" +lnglat_Address[markerArr.length] +
+                                    '</br>停留时间(分钟)<input class="staytime" type="number" name="" ></br></div>', //设置文本标注内容
+                                direction: 'middle' //设置文本标注方位
+                            })
+                            map.add(newMarker)
+                        }else{
+                            log.error('根据经纬度查询地址失败')
+                        }
+                    });
 
                     if (inBjut([e.lnglat.getLng(), e.lnglat.getLat()])) { // 在学校里
                         var tmp = new LngLatAndId()
                         tmp.lnglat = [e.lnglat.getLng(), e.lnglat.getLat()]
                         tmp.id = markerArr.length
                         positionArr.push(tmp)
+                        
                     }
                     markerArr.push(newMarker)
                 }
+                console.log("从经纬度到地点",lnglat_Address)
             });
-
+        
             //删除点 暂时有bug
             $('#delMarker').on('click', function () {
                 var e = markerArr.pop()
