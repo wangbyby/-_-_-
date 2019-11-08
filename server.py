@@ -39,7 +39,11 @@ def send_email(): #发送邮件
         for i in request.form:
             data = json.loads(i)
             print(data)
-        receive = data['emails']
+
+        # receive = data['emails']
+        receive = data.get('emails', '')
+        if receive == '':
+            return  "No email"
         email = yagmail.SMTP(**email_args)
         subject = data['subject']
         contents = data['contents']

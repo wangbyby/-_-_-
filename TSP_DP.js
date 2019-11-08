@@ -74,10 +74,14 @@ var m = [
     [13, 10, 9, 6, 0]
 ]
 
+
 var res = TSP(m)
 console.log("最短路径 : ", res[0])
 console.log("最少花费 : ", res[1])
 
+m = [
+    
+]
 
 
 // for i = 1 to n
@@ -88,12 +92,8 @@ console.log("最少花费 : ", res[1])
 //                 m[i - 1][j - x * w[i]] + x * v[i]
 //             )
 function GKP(M, m, v) {
-    var n = m.length - 1
+    var n = m.length
 
-    function max(a, b) {
-        if (a > b) return a
-        return b
-    }
     /*
         M:背包最大承重量
         n:物品种类个数
@@ -104,44 +104,42 @@ function GKP(M, m, v) {
     for (i = 0; i <= n; i++) {
         dp[i] = new Array(M + 1).fill(0)
     }
-
-    var xi = new Array(n + 1).fill(0)
+    var numGoods = new Array(n+1).fill(0)
     for (i = 1; i <= n; i++) {
         for (j = 0; j <= M; j++) {
-            var count = j / m[i]
+            var count = j / m[i-1]
             for (x = 0; x <= count; x++) {
 
-                var tmp = dp[i - 1][j - x * m[i]] + x * v[i]
+                var tmp = dp[i - 1][j - x * m[i-1]] + x * v[i-1]
                 if (dp[i][j] < tmp) {
                     dp[i][j] = tmp
-                    // xi[i] = {
-                    //     "x": x,
-                    //     "i": i,
-                    //     "j": j
-                    // }
+                    
                 }
-
             }
         }
     }
-    
-    // for( i in dp){
-    //     console.log(dp[i].toString())
-    // }
-
+    console.log("动态规划表",dp)
     console.log("最大值=", dp[n][M])
-
-    
-    console.log(xi)
-    return dp[n][M]
+    j =M;
+    i = n;
+    //构造解路径
+    while (j >=0&&i>0) {
+        // console.log(" (i,j) = ",[i,j])
+        if( dp[i][j] == dp[i-1][j]) {
+            i--
+        }else{
+                j -= m[i-1]
+                numGoods[i]++
+            
+        }
+    }
+    numGoods =  numGoods.splice(1)
+    console.log("解=",numGoods)
+    return [dp[n][M],numGoods]
 }
-var M = 20
+var M = 10
 
-var m = [0, 20, 25, 40, 30]
-var v = [0, 1, 3, 2, 4]
+var m = [ 1, 6, 4, 3]
+var v = [1, 3, 2, 6]
 GKP(M, m, v)
 
-
-function GKP2() {
-
-}

@@ -118,11 +118,11 @@
                     geocoder.getAddress([e.lnglat.getLng(), e.lnglat.getLat()], function(status, result) {
                         if (status === 'complete'&&result.regeocode) {
                             var address = result.regeocode.formattedAddress;
-                            lnglat_Address[markerArr.length] = address.slice(10,-6)
+                            lnglat_Address[markerArr.length-1] = address.slice(10,-6)
 
                             newMarker.setLabel({
                                 offset: new AMap.Pixel(20, 20),
-                                content: "<div >第" +markerArr.length+"个点" +lnglat_Address[markerArr.length] +
+                                content: "<div >第" +(markerArr.length-1)+"个点" +lnglat_Address[markerArr.length-1] +
                                     '</br>停留时间(分钟)<input class="staytime" type="number" name="" ></br></div>', //设置文本标注内容
                                 direction: 'middle' //设置文本标注方位
                             })
@@ -290,9 +290,11 @@
                                     $("#timeblock").empty()
                                     var emailCon = ""
                                     for (var i = 0; i < result.length - 1; i++) {
-                                        var point1 = positionArr[result[i]].id //起点
-                                        var point2 = positionArr[result[i + 1]].id //终点
-                                        console.log("point1,point2", [point1, point2])
+                                        var point1 =0| positionArr[result[i]].id //起点
+                                        var addr1 = lnglat_Address[point1]
+                                        var point2 = 0|positionArr[result[i + 1]].id //终点
+                                        var addr2 = lnglat_Address[point2]
+                                        console.log("point1,addr1 ,point2,adrr2 ", [point1,addr1, point2,addr2])
                                         std.setMilliseconds(std.getMilliseconds() +
                                             stayTime[point1] * 60 * 1000
                                         )//设置时间
@@ -300,7 +302,7 @@
                                         //拼接字符串 显示时间信息在浏览器
                                         totaltime += stayTime[point1] * 60 * 1000
 
-                                        var str = "<li>点" + point1 + "-->点" + point2+'</li>'
+                                        var str = "<li>" +addr1 + "-->" + addr2+'</li>'
                                         var str2 ='<li>' +
                                             std.getHours() + ":" + checkTime(std
                                                 .getMinutes()) + "-->" + data2[1][
