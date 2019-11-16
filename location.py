@@ -1,4 +1,5 @@
 import json
+
 import math
 INF = 100000
 class minQueue:
@@ -146,7 +147,8 @@ class Graph:
             # print("closed = ",closed)
             for v in self.adj(u):
                 gnmi = float(self.martix[u][v]) + g_func[u] # g(v)
-                h_func[v] = float(self.martix[u][v])  # h(v)#没有好的启发函数
+                # h_func[v] = float(self.martix[u][v])  # h(v)#没有好的启发函数
+                h_func[v] = 0
                 fnmi = gnmi + h_func[v] #实际上退化为 dijkstra算法
                 if v not in closed: #v不在closed里面
                     if v not in open_q.queue: #v不在open里面

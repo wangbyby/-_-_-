@@ -79,9 +79,15 @@ var res = TSP(m)
 console.log("最短路径 : ", res[0])
 console.log("最少花费 : ", res[1])
 
-m = [
-    
-]
+// var n = 23
+// var m = new Array(n)
+// for (var i = 0; i < n; i++) {
+//     m[i] = new Array(n).fill(0)
+// }
+// var s1 = new Date().getTime()
+// res = TSP(m)
+// var s2 = new Date().getTime()
+// console.log("花费时间(单位:ms):",s2 - s1)
 
 
 // for i = 1 to n
@@ -104,42 +110,46 @@ function GKP(M, m, v) {
     for (i = 0; i <= n; i++) {
         dp[i] = new Array(M + 1).fill(0)
     }
-    var numGoods = new Array(n+1).fill(0)
+    var numGoods = new Array(n + 1).fill(0)
     for (i = 1; i <= n; i++) {
         for (j = 0; j <= M; j++) {
-            var count = j / m[i-1]
+            var count = j / m[i - 1]
             for (x = 0; x <= count; x++) {
 
-                var tmp = dp[i - 1][j - x * m[i-1]] + x * v[i-1]
+                var tmp = dp[i - 1][j - x * m[i - 1]] + x * v[i - 1]
                 if (dp[i][j] < tmp) {
                     dp[i][j] = tmp
-                    
+
                 }
             }
         }
     }
-    console.log("动态规划表",dp)
+    console.log("动态规划表", dp)
     console.log("最大值=", dp[n][M])
-    j =M;
+    j = M;
     i = n;
     //构造解路径
-    while (j >=0&&i>0) {
+    while (j >= 0 && i > 0) {
         // console.log(" (i,j) = ",[i,j])
-        if( dp[i][j] == dp[i-1][j]) {
+        if (dp[i][j] == dp[i - 1][j]) {
             i--
-        }else{
-                j -= m[i-1]
-                numGoods[i]++
-            
+        } else {
+            j -= m[i - 1]
+            numGoods[i]++
+
         }
     }
-    numGoods =  numGoods.splice(1)
-    console.log("解=",numGoods)
-    return [dp[n][M],numGoods]
+    numGoods = numGoods.splice(1)
+    console.log("解=", numGoods)
+    return [dp[n][M], numGoods]
 }
 var M = 10
 
-var m = [ 1, 6, 4, 3]
+var m = [1, 6, 4, 3]
 var v = [1, 3, 2, 6]
 GKP(M, m, v)
 
+M = 230
+m = [20,25,40,12,31]
+v = [1,2,3,1,5]
+GKP(M, m, v)
