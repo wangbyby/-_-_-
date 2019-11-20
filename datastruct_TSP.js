@@ -1,10 +1,7 @@
 const inf = 1000000 //100000代表无穷大
-
 function Result() {}
 Result.prototype.matrix = null
 Result.prototype.paths = {}
-
-
 
 function Edge() {
     this.a = ""
@@ -101,7 +98,7 @@ function TSP(G, u) {
     console.log("root=", root)
     var hamitonTree = []
 
-    PreOrder2(root, hamitonTree)
+    PreOrder(root, hamitonTree)
     hamitonTree[0] = u
     hamitonTree.push(u)
     console.log("hamiton=", hamitonTree)
@@ -119,7 +116,7 @@ function FindPreNode(nowNode, findNode) {
         return FindPreNode(nowNode.left, findNode) || FindPreNode(nowNode.right, findNode)
     }
 }
-
+//向书中插入节点
 function InsertNode(root, node) {
     var t = FindPreNode(root, node)
     if (t == null) {
@@ -135,53 +132,14 @@ function InsertNode(root, node) {
         return
     }
 }
-
-function PreOrder2(root, l) {
+//前序遍历
+function PreOrder(root, l) {
     if (root != null) {
         l.push(root.b)
-        PreOrder2(root.left, l)
-        PreOrder2(root.right, l)
+        PreOrder(root.left, l)
+        PreOrder(root.right, l)
     }
 }
-
-
-
-function Dijkstra(m, start, end) { //Dijkstra
-    var n = m.length
-    var Q = new minQueue()
-    var pre = {}
-    for (var i = 0; i < n; i++) {
-        Q.f[i] = inf
-    }
-    Q.f[start] = 0
-    Q.push_back(start)
-    while (Q.list.length != 0) {
-        var u = Q.pop_head()
-        // console.log("u=", u)
-        for (var j = 0; j < n; j++) {
-            if (m[u][j] == inf) {
-                continue
-            }
-            if (Q.f[j] > Q.f[u] + m[u][j]) {
-                Q.f[j] = Q.f[u] + m[u][j]
-                pre[j] = u
-                Q.push_back(j)
-            }
-        }
-        // console.log("Queue=", Q.list)
-        // console.log("pre=", pre)
-    }
-    var resPath = getPath(pre, end).reverse()
-    //获得权重
-    var weight = 0 //此时weight单位为 s(秒)
-    for(var i=0; i<resPath.length - 1;i++){
-        weight += m[resPath[i]][resPath[i+1]]
-    }
-    
-    return {'path':resPath, 'weight':weight } //此时weight单位为 min(分钟)
-}
-
-
 function getPath(cameFrom, current) {
     var total_path = [current]
     while (cameFrom[current] != undefined) {
@@ -191,45 +149,82 @@ function getPath(cameFrom, current) {
     return total_path
 }
 
-function minQueue() {
-    this.list = []
-    this.f = {}
-    this.push_back = function (element) {
-        this.list.unshift(element)
-        this.shiftdown(0)
-    }
-    this.Less = function (a, b) {
-        return a < b
-    }
-    this.Swap = function (a, b) {
-        [this.list[a], this.list[b]] = [this.list[b], this.list[a]]
-    }
 
-    this.pop_head = function () {
-        var tmp = this.list[0]
-        this.list = this.list.splice(1)
+// function Dijkstra(m, start, end) { //Dijkstra
+//     var n = m.length
+//     var Q = new minQueue()
+//     var pre = {}
+//     for (var i = 0; i < n; i++) {
+//         Q.f[i] = inf
+//     }
+//     Q.f[start] = 0
+//     Q.push_back(start)
+//     while (Q.list.length != 0) {
+//         var u = Q.pop_head()
+//         // console.log("u=", u)
+//         for (var j = 0; j < n; j++) {
+//             if (m[u][j] == inf) {
+//                 continue
+//             }
+//             if (Q.f[j] > Q.f[u] + m[u][j]) {
+//                 Q.f[j] = Q.f[u] + m[u][j]
+//                 pre[j] = u
+//                 Q.push_back(j)
+//             }
+//         }
+//         // console.log("Queue=", Q.list)
+//         // console.log("pre=", pre)
+//     }
+//     var resPath = getPath(pre, end).reverse()
+//     //获得权重
+//     var weight = 0 //此时weight单位为 s(秒)
+//     for(var i=0; i<resPath.length - 1;i++){
+//         weight += m[resPath[i]][resPath[i+1]]
+//     }
+    
+//     return {'path':resPath, 'weight':weight } //此时weight单位为 min(分钟)
+// }
 
-        this.shiftdown(0)
-        //delete this.f[tmp]
-        return tmp
-    }
 
-    this.shiftdown = function (index) {
-        let left = index * 2 + 1
-        let right = index * 2 + 2
-        let min = index
-        if (left < this.list.length && this.Less(this.f[this.list[left]], this.f[this.list[index]])) {
-            min = left
-        }
-        if (right < this.list.length && this.Less(this.f[this.list[right]], this.f[this.list[min]])) {
-            min = right
-        }
-        if (min != index) {
-            this.Swap(min, index)
-            this.shiftdown(min)
-        }
-    }
-}
+// function minQueue() {
+//     this.list = []
+//     this.f = {}
+//     this.push_back = function (element) {
+//         this.list.unshift(element)
+//         this.shiftdown(0)
+//     }
+//     this.Less = function (a, b) {
+//         return a < b
+//     }
+//     this.Swap = function (a, b) {
+//         [this.list[a], this.list[b]] = [this.list[b], this.list[a]]
+//     }
+
+//     this.pop_head = function () {
+//         var tmp = this.list[0]
+//         this.list = this.list.splice(1)
+
+//         this.shiftdown(0)
+//         //delete this.f[tmp]
+//         return tmp
+//     }
+
+//     this.shiftdown = function (index) {
+//         let left = index * 2 + 1
+//         let right = index * 2 + 2
+//         let min = index
+//         if (left < this.list.length && this.Less(this.f[this.list[left]], this.f[this.list[index]])) {
+//             min = left
+//         }
+//         if (right < this.list.length && this.Less(this.f[this.list[right]], this.f[this.list[min]])) {
+//             min = right
+//         }
+//         if (min != index) {
+//             this.Swap(min, index)
+//             this.shiftdown(min)
+//         }
+//     }
+// }
 // exports.FLOYD = FLOYD
 // exports.TSP = TSP
 // exports.Graph = Graph
