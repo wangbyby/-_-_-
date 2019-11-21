@@ -72,6 +72,7 @@
     //eval end
     */
 
+    /*
 function Point() {
     this.a = -1
     this.b = -1
@@ -138,3 +139,38 @@ function CheckBoard() {
         return player
     }
 }
+*/
+
+/*
+    α-β剪枝法伪代码
+    node : 该节点
+    depth : 深度
+    a : α的值
+    b : β的值
+*/
+function AlphaBeta(node, depth, a,b, player) 
+    if depth ==0 || node is the end status
+        return eval_value(node)
+    //end of  if depth ==0 || node is the end 
+    if player == MaxPlayer 
+        for child of node 
+            atmp = max(a, AlphaBeta(child,depth-1,a,b,!palyer))
+            if b <= atmp // beta剪枝
+                return atmp
+            // end of if b <= atmp 
+        // end of for child of node
+    // end of if player == MaxPlayer 
+    else 
+        for child of node
+            btmp = min(b,AlphaBeta(child,depth-1,a,b,!palyer) )
+            if btmp <= a
+                return btmp
+            // end of if btmp <= a
+        // end of for child of node
+    // end of else
+// end of function AlphaBeta
+
+// 返回node的评估值
+function eval_value(node)
+    
+// end of function eval_value

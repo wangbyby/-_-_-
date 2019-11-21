@@ -121,53 +121,53 @@ class Graph:
         with open('location.json') as f:
             self.location_data = json.load(f)
         return self.location_data[str(u)][2]
-    def Astar(self, start, end):
-        # 返回一条从start到end的路径,以及路径花费的时间
-        len_list = range(len(self.martix))
-        closed = set()
-        open_q = minQueue()
-        g_func = {}
-        h_func = {}
-        #对其初始化
-        for i in len_list:
-            g_func[i] = INF
-            open_q.cost[i] = INF
-        g_func[start] = 0
-        open_q.cost[start] = 0
-        open_q.push_back(start)
-        parent = {}
-
-        while len(open_q.queue) != 0:
-            u = open_q.pop_head()
-            if u == end:
-                #构造路径
-                #路径权重:
-                return  self.get_path(parent,end)
-            closed.add(u)
-            # print("closed = ",closed)
-            for v in self.adj(u):
-                gnmi = float(self.martix[u][v]) + g_func[u] # g(v)
-                # h_func[v] = float(self.martix[u][v])  # h(v)#没有好的启发函数
-                h_func[v] = 0
-                fnmi = gnmi + h_func[v] #实际上退化为 dijkstra算法
-                if v not in closed: #v不在closed里面
-                    if v not in open_q.queue: #v不在open里面
-                        open_q.cost[v] = fnmi
-                        open_q.push_back(v)
-                        parent[v] = u
-                    else:
-                        if gnmi < g_func[v]:
-                            g_func[v] = gnmi
-                            parent[v] = u
-                else:
-
-                    if gnmi < g_func[v]:
-                        closed.remove(v)
-                        g_func[v] = gnmi
-                        open_q.cost[v] =fnmi
-                        open_q.push_back(v)
-                        parent[v] = u
-        return [],-1
+    # def Astar(self, start, end):
+    #     # 返回一条从start到end的路径,以及路径花费的时间
+    #     len_list = range(len(self.martix))
+    #     closed = set()
+    #     open_q = minQueue()
+    #     g_func = {}
+    #     h_func = {}
+    #     #对其初始化
+    #     for i in len_list:
+    #         g_func[i] = INF
+    #         open_q.cost[i] = INF
+    #     g_func[start] = 0
+    #     open_q.cost[start] = 0
+    #     open_q.push_back(start)
+    #     parent = {}
+    #
+    #     while len(open_q.queue) != 0:
+    #         u = open_q.pop_head()
+    #         if u == end:
+    #             #构造路径
+    #             #路径权重:
+    #             return  self.get_path(parent,end)
+    #         closed.add(u)
+    #         # print("closed = ",closed)
+    #         for v in self.adj(u):
+    #             gnmi = float(self.martix[u][v]) + g_func[u] # g(v)
+    #             # h_func[v] = float(self.martix[u][v])  # h(v)#没有好的启发函数
+    #             h_func[v] = 0
+    #             fnmi = gnmi + h_func[v] #实际上退化为 dijkstra算法
+    #             if v not in closed: #v不在closed里面
+    #                 if v not in open_q.queue: #v不在open里面
+    #                     open_q.cost[v] = fnmi
+    #                     open_q.push_back(v)
+    #                     parent[v] = u
+    #                 else:
+    #                     if gnmi < g_func[v]:
+    #                         g_func[v] = gnmi
+    #                         parent[v] = u
+    #             else:
+    #
+    #                 if gnmi < g_func[v]:
+    #                     closed.remove(v)
+    #                     g_func[v] = gnmi
+    #                     open_q.cost[v] =fnmi
+    #                     open_q.push_back(v)
+    #                     parent[v] = u
+    #     return [],-1
 
 # if __name__ == '__main__':
 #     a,b = 30,50

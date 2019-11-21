@@ -55,10 +55,10 @@ def send_email(): #发送邮件
 @app.route('/data', methods=['GET',"POST"])
 def data(): #返回要查询的路径
     res = None
+    g = location.Graph()
+    g.read_from_file()
     for i in request.form:
         search = json.loads(i)
-        g = location.Graph()
-        g.read_from_file()
         res = g.search(search)
     print(res)
     return jsonify(res)
