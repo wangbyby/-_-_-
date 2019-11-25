@@ -2,6 +2,7 @@ from flask import Flask, render_template, send_file,  json, jsonify, make_respon
 import json
 import  yagmail
 import location
+
 app = Flask(__name__, static_url_path='')
 
 #send emails 的配置

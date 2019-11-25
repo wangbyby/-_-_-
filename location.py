@@ -31,6 +31,7 @@ class minQueue:
 class Graph:
     martix = [] #二维数组
     distance_file_path = "distance.json" #距离文件路径
+    location_file_path = "location.json"
     location_data = None #位置
 
     #最初构造矩阵的方法
@@ -118,7 +119,7 @@ class Graph:
         path_a.reverse()
         return path_a, math.ceil(weight / 60)
     def adj(self, u): #返回u的邻接
-        with open('location.json') as f:
+        with open(self.location_file_path) as f:
             self.location_data = json.load(f)
         return self.location_data[str(u)][2]
     # def Astar(self, start, end):
@@ -169,17 +170,18 @@ class Graph:
     #                     parent[v] = u
     #     return [],-1
 
-# if __name__ == '__main__':
-#     a,b = 30,50
-#     g = Graph()
-#     g.read_from_file()
-#     start = time.time()
-#     res = g.Astar(a,b)
-#     end = time.time()
-#     print("A* time",end-start)
-#     print(res)
-#     start = time.time()
-#     res = g.dijkstra(a,b)
-#     end = time.time()
-#     print("dijkstra time", end - start)
-#     print(res)
+if __name__ == '__main__':
+    a,b = 30,50
+    g = Graph()
+    # g.read_from_file()
+    print(g.adj(1))
+    # start = time.time()
+    # res = g.Astar(a,b)
+    # end = time.time()
+    # print("A* time",end-start)
+    # print(res)
+    # start = time.time()
+    # res = g.dijkstra(a,b)
+    # end = time.time()
+    # print("dijkstra time", end - start)
+    # print(res)

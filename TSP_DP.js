@@ -62,7 +62,6 @@ function TSP(D) { //起点为0
     path.push(0)
     //返回值说明 path为路径, mincost为最短花费
     return [path, mincost]
-
 }
 
 
