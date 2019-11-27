@@ -1,6 +1,6 @@
 #pgsql
-create database steam
-\c steam
+create database steam;
+\c steam;
 #游戏发行商
 #一般来说 发行商与开发商 不一样
 create table gc(
@@ -25,8 +25,8 @@ create table player(
 
 #游戏
 create table game(
-    gname character varying(20) primary key,
-    price money NOT NUll default 100
+    gname character varying(30) primary key,
+    price money NOT NUll default 20
 )WITH (
     OIDS = FALSE
 )TABLESPACE pg_default;
@@ -80,10 +80,39 @@ create table com_con(
 )TABLESPACE pg_default;
 
 
+#游戏发行商
 #'' : 字符串
 insert into steam.gc(gcname,address,info) values ('NewWorld', 'American','小公司');
-insert into steam.gc(gcname,address,info) values ('Valve', 'American','黑心商人');
+insert into steam.gc(gcname,address,info) values ('Valve', 'American','黑心公司');
 insert into steam.gc(gcname,address,info) values ('Paradox', 'Sweden','沙盒类游戏');
 insert into steam.gc(gcname,address,info) values ('Crytek', 'Germany frankfurt','深受盗版困扰');
-insert into steam.gc(gcname,address,info) values ('Petroglyph', 'American Las Vegas','前西木员工')
-insert into steam.gc(gcname,address,info) values ('505 Games', 'Italy','没啥')
+insert into steam.gc(gcname,address,info) values ('Petroglyph', 'American Las Vegas','生于西木');
+insert into steam.gc(gcname,address,info) values ('505 Games', 'Italy','知名游戏厂商');
+insert into steam.gc(gcname,address,info) values ('2K','Boston/Ausralis','知名游戏厂商');
+insert into steam.gc(gcname,address,info) values  ('Ubisoft','France','大型跨国公司');
+insert into steam.gc(gcname,address,info) values    ('Activision', 'American', '第三方视频游戏');
+insert into steam.gc(gcname,address,info) values    ('Running With Scissors', 'American', '没有资料');
+
+#游戏玩家
+insert into steam.player(uname, upwd, nickname,balance, level) values ('clearlove9', '000000', 'yc',0,0);
+insert into steam.player(uname, upwd, nickname,balance, level) values ('cy', '123456', '深海哥',100,3);
+insert into steam.player(uname, upwd, nickname,balance, level) values ('bywww', 'password', 'by',0,2);
+insert into steam.player(uname, upwd, nickname,balance, level) values ('tyj', 'root', '欢乐多',50,3);
+insert into steam.player(uname, upwd, nickname,balance, level) values ('DioBrando', 'theworld', 'dio',0,10);
+insert into steam.player(uname, upwd, nickname,balance, level) values ('KujoJotaro', '111111', 'jojo',1000,10);
+insert into steam.player(uname, upwd, nickname,balance, level) values ('taige', 'qwerty', 'tg',200,7);
+insert into steam.player(uname, upwd, nickname,balance, level) values ('xwj', 'root', '深蓝的海',0,4);
+insert into steam.player(uname, upwd, nickname,balance, level) values ('Kars', 'sunshine', '究极生物',10000,100);
+insert into steam.player(uname, upwd, nickname,balance, level) values ('Wamuu', '1234567', '瓦乌姆',0,90);
+
+#游戏
+insert into steam.game(gname,price) values ('Insurency', 20);
+insert into steam.game(gname,price) values ('CSGO',50);
+insert into steam.game(gname,price) values ('CallofDuty', 40);
+insert into steam.game(gname,price) values ('Dota2',0);
+insert into steam.game(gname,price) values ('8BitInvadier',5);
+insert into steam.game(gname,price) values ('Ass',10);
+insert into steam.game(gname,price) values ();
+insert into steam.game(gname,price) values ();
+insert into steam.game(gname,price) values ();
+insert into steam.game(gname,price) values ();

@@ -78,15 +78,15 @@ var res = TSP(m)
 console.log("最短路径 : ", res[0])
 console.log("最少花费 : ", res[1])
 
-// var n = 23
-// var m = new Array(n)
-// for (var i = 0; i < n; i++) {
-//     m[i] = new Array(n).fill(0)
-// }
-// var s1 = new Date().getTime()
-// res = TSP(m)
-// var s2 = new Date().getTime()
-// console.log("花费时间(单位:ms):",s2 - s1)
+var n = 23
+var m = new Array(n)
+for (var i = 0; i < n; i++) {
+    m[i] = new Array(n).fill(0)
+}
+var s1 = new Date().getTime()
+res = TSP(m)
+var s2 = new Date().getTime()
+console.log("花费时间(单位:ms):",s2 - s1)
 
 
 // for i = 1 to n
