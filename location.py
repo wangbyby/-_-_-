@@ -77,6 +77,7 @@ class Graph:
     def read_from_file(self):
         with open(self.distance_file_path) as f:
             self.martix = json.loads(json.load(f))
+            
     def search(self, points = []):
         print(points)
         #Ex . points = [1,2,3,4,1]
@@ -170,12 +171,13 @@ class Graph:
     #                     parent[v] = u
     #     return [],-1
 
-if __name__ == '__main__':
-    a,b = 30,50
-    g = Graph()
-    # g.read_from_file()
-    print(g.adj(1))
-    # start = time.time()
+# if __name__ == '__main__':
+# #     a,b = 30,50
+#     g = Graph()
+#     g.read_from_file()
+
+#     print(g.adj(1))
+#     # start = time.time()
     # res = g.Astar(a,b)
     # end = time.time()
     # print("A* time",end-start)
