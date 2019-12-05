@@ -1,0 +1,15 @@
+module MUX_tb_sec  ; 
+ 
+  reg    choose   ; 
+  reg  [31:0]  a   ; 
+  wire  [31:0]  z   ; 
+  reg  [31:0]  b   ; 
+  MUX  
+   DUT  ( 
+       .choose (choose ) ,
+      .a (a ) ,
+      .z (z ) ,
+      .b (b ) ); 
+
+endmodule
+

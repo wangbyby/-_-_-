@@ -1,0 +1,14 @@
+<interfaceDefinition version='1.2' language='verilog' kind='module' name='GPR'>
+    <portList>
+
+      <port name='inReg' direction='input' type='[31:0]' kind='array' packedDimension='[31:0]'> </port>
+      <port name='rs' direction='input' type='[4:0]' kind='array' packedDimension='[4:0]'> </port>
+      <port name='rt' direction='input' type='[4:0]' kind='array' packedDimension='[4:0]'> </port>
+      <port name='rd' direction='input' type='[4:0]' kind='array' packedDimension='[4:0]'> </port>
+      <port name='flag_Write' direction='input' type='' kind=''> </port>
+      <port name='clk' direction='input' type='' kind=''> </port>
+      <port name='rs1' direction='output' type='[31:0]' kind='regvector' packedDimension='[31:0]'> </port>
+      <port name='rt1' direction='output' type='[31:0]' kind='regvector' packedDimension='[31:0]'> </port>
+
+    </portList>
+</interfaceDefinition>

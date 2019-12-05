@@ -1,0 +1,14 @@
+<interfaceDefinition version='1.2' language='verilog' kind='module' name='alu'>
+    <portList>
+
+      <port name='clk' direction='input' type='' kind=''> </port>
+      <port name='inA' direction='input' type='[31:0]' kind='array' packedDimension='[31:0]'> </port>
+      <port name='inB' direction='input' type='[31:0]' kind='array' packedDimension='[31:0]'> </port>
+      <port name='imm16' direction='input' type='[15:0]' kind='array' packedDimension='[15:0]'> </port>
+      <port name='sel_alu' direction='input' type='[3:0]' kind='array' packedDimension='[3:0]'> </port>
+      <port name='outC' direction='output' type='[31:0]' kind='regvector' packedDimension='[31:0]'> </port>
+      <port name='flag_beq' direction='output' type='reg' kind=''> </port>
+      <port name='flag_add_overflow' direction='output' type='reg' kind=''> </port>
+
+    </portList>
+</interfaceDefinition>

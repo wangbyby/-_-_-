@@ -1,0 +1,11 @@
+module IM_tb  ; 
+ 
+  wire  [31:0]  outIns   ; 
+  reg  [31:0]  address   ; 
+  IM  
+   DUT  ( 
+       .outIns (outIns ) ,
+      .address (address ) ); 
+
+endmodule
+

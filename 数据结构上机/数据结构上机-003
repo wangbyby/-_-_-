@@ -1,0 +1,157 @@
+#include <iostream>
+#include <map>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+//全局变量 map 
+map<string, char> outfileDict;
+map<string, char>::iterator fit; 
+
+struct Node
+{
+    int fre;
+    string code;
+    string huffman;
+    Node *left , *right;
+    bool operator()(const Node& lhs, const Node& rhs) const { lhs.fre < rhs.fre; }
+};
+struct HC
+{
+    vector<Node*> huffToFile;
+    Node *root;
+    string HuffString;
+    void Show(){
+        show(root,"");
+    }
+    void show( Node * n ,const string s){
+        n->huffman = s;
+        //cout<<"s="<<s<<endl;
+        if (n->code != "")
+        {
+            huffToFile.push_back(n);
+            HuffString += n->code;
+            HuffString += "$";
+            HuffString += n->huffman+"\n";
+        } 
+        if (n->left!= NULL)
+        {
+            show(n->left,s+"0");
+        }
+        if (n->right!= NULL)
+        {
+            show(n->right,s+"1");
+        }
+    }
+};
+bool Compare(const Node  *a ,const Node *b){
+    return a->fre > b->fre;
+}
+
+string EnCoding(string file){ //用作以后解压
+    string tmp = "";
+    string content = "";
+    for (int i = 0; i < file.size(); i++)
+    {
+        tmp += file[i];
+        fit = outfileDict.find(tmp);
+        if (fit != outfileDict.end() )
+        {
+            //是编码
+            content += outfileDict[tmp];
+            tmp = "";
+        }
+    }
+    return content;
+}
+
+void OtherCoding(string filestr){
+    char ch = filestr[0];
+    string tmp = "";
+    for (int i = 2; i < filestr.size(); i++){
+        tmp += filestr[i];
+    }
+    outfileDict[tmp] = ch;
+}
+
+int main(){
+    map<char , int> ioMap;
+    map<char, int>::iterator it;
+
+    //读取文件
+    fstream readFile;
+    readFile.open("./csdn.txt");
+    string filestr = "";
+    
+    char c;
+    while(readFile.peek() != EOF){
+        readFile.read(&c,1);
+        ioMap[c]++;
+        filestr += c;
+    }
+    cout<<filestr<<endl;
+    readFile.close();
+    vector<Node*> vectorNode;
+    for (it = ioMap.begin(); it!=ioMap.end(); it++)
+    {
+        
+        if (it->first != '\n'&& it->first != ' ')
+        {
+            Node *z  = new Node ;
+            z->left = z->right = NULL;
+            z->code += it->first;
+            z->fre = it->second;
+            vectorNode.push_back(z);
+        }
+        
+    }
+    sort(vectorNode.begin(),vectorNode.end(),Compare);
+   // Huffman coding 编码部分
+    HC hc ;
+    hc.root = new Node;
+    int n = vectorNode.size();
+    for (int i = 0; i < n-1; i++)
+    {
+        Node *z = new Node;
+        z->left = vectorNode.back();
+        vectorNode.pop_back();
+
+        z->right = vectorNode.back();
+        vectorNode.pop_back();
+        z->fre = z->right->fre + z->left->fre;
+        vectorNode.push_back(z);
+
+        sort(vectorNode.begin(),vectorNode.end(),Compare);
+        hc.root = vectorNode[0];
+    }
+    string endFlag = "</end>";
+    //写入文件开头
+    fstream infile;
+    infile.open("./csdn.txt");
+    hc.HuffString = "";
+    hc.Show();
+    string huffstr = hc.HuffString + endFlag+"\n"+filestr;
+    infile<<huffstr<<endl;
+    infile.close();
+
+    //读取文件
+    readFile.open("./csdn.txt");
+    filestr = "";
+    string content = "";
+    while(readFile.peek() != EOF){
+        readFile>>filestr;
+        if (filestr.find(endFlag)!= string::npos) //遇到了endflag
+        {
+            break;
+        }else
+        {
+            OtherCoding(filestr);
+        }
+    }
+    for(fit=outfileDict.begin();fit!=outfileDict.end();fit++){
+        cout<<fit->first<<"$"<<fit->second<<endl;
+    }
+    return 0;
+}

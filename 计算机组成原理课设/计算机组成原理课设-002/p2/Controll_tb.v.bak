@@ -1,0 +1,35 @@
+module Controll_tb  ; 
+ 
+  wire  reg  beq   ; 
+  wire  reg  lui   ; 
+  wire  [3:0]  sel_ALU   ; 
+  wire  reg  rd   ; 
+  reg  [5:0]  op   ; 
+  wire  reg  Extop   ; 
+  wire  reg  RAM_to_GPR   ; 
+  wire  reg  RAM_write   ; 
+  wire  reg  j   ; 
+  wire  reg  GPR_write   ; 
+  wire  reg  jr   ; 
+  wire  reg  imm_to_ALU   ; 
+  reg  [5:0]  order_func   ; 
+  wire  reg  jal   ; 
+  Controll  
+   DUT  ( 
+       .beq (beq ) ,
+      .lui (lui ) ,
+      .sel_ALU (sel_ALU ) ,
+      .rd (rd ) ,
+      .op (op ) ,
+      .Extop (Extop ) ,
+      .RAM_to_GPR (RAM_to_GPR ) ,
+      .RAM_write (RAM_write ) ,
+      .j (j ) ,
+      .GPR_write (GPR_write ) ,
+      .jr (jr ) ,
+      .imm_to_ALU (imm_to_ALU ) ,
+      .order_func (order_func ) ,
+      .jal (jal ) ); 
+
+endmodule
+

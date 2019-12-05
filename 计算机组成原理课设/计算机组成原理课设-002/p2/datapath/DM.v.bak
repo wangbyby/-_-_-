@@ -1,0 +1,22 @@
+module DM(
+  input clk,
+  input we, //ram write enable
+  input read, // ram read enable
+  input  [11:2] addr,
+  input  [31:0] in_d,
+  output reg[31:0]  out_d );
+//4k
+  reg [31:0]ram[1023:0];
+
+  
+  always@(posedge clk) begin
+    case({we,read})
+      2'b10:
+        ram[addr] <= in_d;
+      2'b01:
+        out_d <= ram[addr];
+      default:
+        out_d <= 32'b0;
+    endcase
+  end
+endmodule

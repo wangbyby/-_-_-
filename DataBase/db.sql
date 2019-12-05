@@ -205,3 +205,11 @@ update player SET nickname='赌怪',upwd='thereisnopoint' where uname='cy';
 
 delete from own ;
 delete from issue where itype='FPS';
+
+
+
+-- : 注释
+/*
+    多行注释
+*/
+--select max(f.num) from own , (select count(gname) as num from own group by uname) as f;

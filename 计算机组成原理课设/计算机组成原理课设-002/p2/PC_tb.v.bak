@@ -1,0 +1,15 @@
+module PC_tb  ; 
+ 
+  reg    pcReset   ; 
+  reg    clk   ; 
+  wire  [31:0]  pcOut   ; 
+  reg  [31:0]  pc   ; 
+  PC  
+   DUT  ( 
+       .pcReset (pcReset ) ,
+      .clk (clk ) ,
+      .pcOut (pcOut ) ,
+      .pc (pc ) ); 
+
+endmodule
+

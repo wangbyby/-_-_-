@@ -1,0 +1,156 @@
+;以下判断质数
+DATAS SEGMENT  
+    i db 20,?,20 dup(?)
+    ip db 0ah,0dh,'is p',0ah,0dh,'$'
+    np db 0ah,0dh,'not p',0ah,0dh,'$'
+	num dw ?
+DATAS ENDS
+
+STACKS SEGMENT
+  
+STACKS ENDS
+
+CODES SEGMENT
+    ASSUME CS:CODES,DS:DATAS,SS:STACKS
+START:
+    MOV AX,DATAS
+    MOV DS,AX
+   
+   	lea dx,i
+   	mov ah,0ah
+   	int 21h
+   	mov dl, 0ah   ;换行
+    mov ah, 2
+    int 21h
+    mov dl, 0dh  ;回车
+    mov ah, 2
+    int 21h
+    ;以上为输入字符串
+    MOV DX,0
+	MOV NUM,0
+	MOV AX,0
+	MOV BX,10 	;重点
+	MOV SI,2	;重点
+ l1:mov al,i[si]
+  	cmp al, 0dh ;与回车比较
+  	je end1
+  	sub al,30h
+  	cmp num,0
+  	je do
+  	push ax
+  	mov ax,num
+  	mul bx
+  	mov num,ax
+  	pop ax
+ do:add num,ax
+  	mov ax,0
+  	inc si
+  	jmp l1
+end1:
+
+	call judge
+	jmp theend
+judge proc near
+	;mov bx,num
+	mov dx,10
+	mov cx,num-1
+	
+LL:
+	
+	mov ax,num
+	div cx
+	dec cx
+	cmp ah,0	
+	je notp
+	cmp cx,1
+	je LLL
+	jmp LL
+LLL:lea dx,ip
+	mov ah,09h
+	int 21h
+	jmp rend
+notp:
+	lea dx,np
+	mov ah,09h
+	int 21h
+	rend:
+ret
+judge endp
+theend:
+    MOV AH,4CH
+    INT 21H
+CODES ENDS
+    END START
+;判断质数程序结束
+
+
+;以下(个位数加十位数)%10==百位数 判断程序
+DATAS SEGMENT
+    n db ?
+DATAS ENDS
+
+STACKS SEGMENT
+
+STACKS ENDS
+
+CODES SEGMENT
+    ASSUME CS:CODES,DS:DATAS,SS:STACKS
+START:
+    MOV AX,DATAS
+    MOV DS,AX
+   
+    
+    mov cx,1000
+    mov bl,10
+    mov bh,100
+    mov ax,0
+    mov si,2
+    L1:
+    	dec cx
+    	mov ax,cx
+    	cmp cx,100
+    	jz e1
+    	
+    	div bh
+    	mov dh,al
+    	mov al,ah
+    	mov ah,0
+    	div bl
+    	add al,ah
+ 		mov ah,0
+ 		div bl
+ 		
+ 		cmp ah,dh
+ 		jne L1
+
+    	mov ax,cx
+    	;以上为判断程序
+    	;以下为打印程序
+    	div bh
+    	mov dl,al
+    	add dl,30h
+    	mov dh,ah
+    	mov ah,2
+    	int 21h
+    	mov ax,0
+    	mov al,dh
+    	div bl
+    	mov dx,ax
+    	add dl,30h
+    	mov ah,2
+    	int 21h
+    	mov dl,dh
+    	add dl,30h
+    	mov ah,2
+    	int 21h
+    	mov dl,' '
+    	mov ah,2
+    	int 21h
+   
+    	jmp L1
+    e1:
+    MOV AH,4CH
+    INT 21H
+CODES ENDS
+    END START
+;(个位数加十位数)%10==百位数 判断程序结束

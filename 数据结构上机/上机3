@@ -1,0 +1,122 @@
+#include<list>
+#include<iostream>
+#include<string>
+using namespace std;
+
+struct Node
+{
+    float value;
+    char ch;
+    Node *left , *right;
+};
+
+void printTree(Node* root){
+    if (root ==NULL)
+    {
+        return ;
+    }
+    list<Node*> arr;
+    arr.push_back(root);
+    int current, next;
+    current = 1;
+    next = 0;
+    while (!arr.empty())
+    {
+        Node* cur = arr.front();
+        arr.pop_front();
+
+        if (cur->ch !='$')
+        {
+
+            cout<<"\t"<<cur->ch;
+        }else
+        {
+            
+            cout<<"\t"<<cur->value;
+        }
+        
+        current--;
+        if (cur->left != NULL)
+        {
+            arr.push_back(cur->left);
+            next++;
+        }
+        if (cur->right != NULL)
+        {
+            arr.push_back(cur->right);
+            next++;
+        }
+        if (current==0)
+        {
+            cout<<endl;
+            current = next;
+            next = 0;
+        }
+        
+    }
+    
+    
+}
+
+
+int pri(const char c){
+    switch (c)
+    {
+        case '#':
+            return 0;
+        case ')':
+            return 5;
+        case '+':
+            return  2 ;
+        case '-':
+            return 3 ;
+        case '*':
+            return 5;
+        case '/':
+            return 5;
+        case '(':
+            return 5;
+        default:
+            return -1;
+        case ' ':
+            return 1;
+    }
+}
+int main(){
+    string pres = "+1*2+34";
+    string mids = "1+2*(3+4)";
+    string sufs = "1234+*+";
+
+    list<Node*> nodelist;
+    Node* root = new Node();
+    //后缀
+    for (int i = 0; i < sufs.size(); i++)
+    {
+    
+        if ( pri(sufs[i]) ==-1) // num
+        {
+            Node* n = new Node();
+            string tmp = "";
+            tmp += sufs[i];
+            n->value =  atof(tmp.c_str());
+            n->ch = '$';
+            tmp = "";
+            nodelist.push_back(n);
+        }
+        else
+        {
+            Node* a = nodelist.back();
+            nodelist.pop_back();
+            Node* b = nodelist.back();
+            nodelist.pop_back();
+            Node* c = new Node();
+            c->ch = sufs[i];
+            c->left = b;
+            c->right = a;
+            nodelist.push_back(c);
+            root = c;
+        }
+    }
+    printTree(root);
+    return 0;
+}

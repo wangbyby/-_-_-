@@ -1,0 +1,10 @@
+<interfaceDefinition version='1.2' language='verilog' kind='module' name='MUX'>
+    <portList>
+
+      <port name='a' direction='input' type='[31:0]' kind='array' packedDimension='[31:0]'> </port>
+      <port name='b' direction='input' type='[31:0]' kind='array' packedDimension='[31:0]'> </port>
+      <port name='choose' direction='input' type='' kind=''> </port>
+      <port name='z' direction='output' type='[31:0]' kind='regvector' packedDimension='[31:0]'> </port>
+
+    </portList>
+</interfaceDefinition>

@@ -1,0 +1,120 @@
+C:/Users/13298/Desktop/p2/datapath/DM.v {1 {vlog -work work -vopt C:/Users/13298/Desktop/p2/datapath/DM.v
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module DM
+
+Top level modules:
+	DM
+
+} {} {}} C:/Users/13298/Desktop/p2/datapath/gpr.v {1 {vlog -work work -vopt C:/Users/13298/Desktop/p2/datapath/gpr.v
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module GPR
+
+Top level modules:
+	GPR
+
+} {} {}} DM_tb.v {1 {vlog -work work -vopt C:/Users/13298/Desktop/p2/DM_tb.v
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module DM_tb
+
+Top level modules:
+	DM_tb
+
+} {} {}} C:/Users/13298/Desktop/p2/datapath/pc.v {1 {vlog -work work -vopt C:/Users/13298/Desktop/p2/datapath/pc.v
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module PC
+
+Top level modules:
+	PC
+
+} {} {}} NPC_tb.v {1 {vlog -work work -vopt C:/Users/13298/Desktop/p2/NPC_tb.v
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module NPC_tb
+
+Top level modules:
+	NPC_tb
+
+} {} {}} PC_tb.v {1 {vlog -work work -vopt C:/Users/13298/Desktop/p2/PC_tb.v
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module PC_tb
+
+Top level modules:
+	PC_tb
+
+} {} {}} Controll_tb.v {1 {vlog -work work -vopt C:/Users/13298/Desktop/p2/Controll_tb.v
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module Controll_tb
+
+Top level modules:
+	Controll_tb
+
+} {} {}} IM_tb.v {1 {vlog -work work -vopt C:/Users/13298/Desktop/p2/IM_tb.v
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module IM_tb
+
+Top level modules:
+	IM_tb
+
+} {} {}} D:/nodejs/alu_sec.v {1 {vlog -work work -vopt D:/nodejs/alu_sec.v
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module alu
+
+Top level modules:
+	alu
+
+} {} {}} C:/Users/13298/Desktop/p2/datapath/npc.v {1 {vlog -work work -vopt C:/Users/13298/Desktop/p2/datapath/npc.v
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module NPC
+
+Top level modules:
+	NPC
+
+} {} {}} C:/Users/13298/Desktop/p2/datapath/MUX.v {1 {vlog -work work -vopt C:/Users/13298/Desktop/p2/datapath/MUX.v
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module MUX
+
+Top level modules:
+	MUX
+
+} {} {}} C:/Users/13298/Desktop/p2/datapath/imm16Ext.v {1 {vlog -work work -vopt C:/Users/13298/Desktop/p2/datapath/imm16Ext.v
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module imm16Ext
+
+Top level modules:
+	imm16Ext
+
+} {} {}} GPR_tb.v {1 {vlog -work work -vopt C:/Users/13298/Desktop/p2/GPR_tb.v
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module GPR_tb
+
+Top level modules:
+	GPR_tb
+
+} {} {}} C:/Users/13298/Desktop/p2/control/control.v {1 {vlog -work work -vopt C:/Users/13298/Desktop/p2/control/control.v
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module Controll
+
+Top level modules:
+	Controll
+
+} {} {}} alu_tb.v {1 {vlog -work work -vopt C:/Users/13298/Desktop/p2/alu_tb.v
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module alu_tb
+
+Top level modules:
+	alu_tb
+
+} {} {}} MUX_tb.v {1 {vlog -work work -vopt C:/Users/13298/Desktop/p2/MUX_tb.v
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module MUX_tb_sec
+
+Top level modules:
+	MUX_tb_sec
+
+} {} {}} C:/Users/13298/Desktop/p2/datapath/IM.v {1 {vlog -work work -vopt C:/Users/13298/Desktop/p2/datapath/IM.v
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module IM
+
+Top level modules:
+	IM
+
+} {} {}}

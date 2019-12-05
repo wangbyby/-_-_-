@@ -1,0 +1,487 @@
+
+
+
+源代码:
+#include<iostream>
+#include<vector>
+#include <sys/time.h> //linux下头文件
+#include<limits.h>
+using namespace std;
+#define left(x) 2*x+1;//获得左节点在数组中的下标
+#define right(x) 2*(x+1);//获得右节点在数组中的下标
+
+template<typename datatype>
+int partition(vector<datatype>& A ,int p,int r){
+datatype x = A[r];
+int i = p-1;
+int j= 0;
+for ( j = p; j < r; j++)
+{
+if (A[j] <= x)
+{
+i++;
+swap(A[i],A[j]);
+}
+}
+swap(A[i+1],A[j]);
+return i+1;
+}
+
+//插入排序
+template<typename datatype>
+void insertSort(vector<datatype>& a ,int p ,int len) {
+    for (int j=p+1; j<=len; j++)
+    {
+        int key = a[j];
+        int i = j-1;
+        while (i>=p && a[i]>key)
+        {
+            a[i+1] = a[i];
+            i--;
+        }
+        a[i+1] = key;
+    }
+
+}
+template<typename datatype>
+int randompartition(vector<datatype>& A ,int p,int r){
+int i = rand()%(r-p) + p;
+swap(A[r],A[i]);
+return partition(A,p,r);
+}
+
+template<typename datatype>
+void quicksort(vector<datatype>& vec ,int p ,int r){
+if( p < r) {
+int q = partition(vec,p,r);
+if ( r - p > 11)
+{
+quicksort(vec,p,q-1);
+quicksort(vec,q+1,r);
+}else
+{
+insertSort(vec, p,r);
+}
+// quicksort(vec,p,q-1);
+// quicksort(vec,q+1,r);
+}
+}
+template<typename datatype>
+void randomquicksort(vector<datatype>& vec ,int p ,int r){
+if( p < r) {
+int q = randompartition(vec,p,r);
+if ( r - p > 11)
+{
+quicksort(vec,p,q-1);
+quicksort(vec,q+1,r);
+}else
+{
+insertSort(vec, p,r);
+}
+// quicksort(vec,p,q-1);
+// quicksort(vec,q+1,r);
+}
+}
+
+//HeapSort
+template<typename data>
+void MaxHeapify(vector<data> &a,int i,int low,int high)//输入为要被排序的数组和根节点，数组a当中被维护的那一部分的下标low，high
+{
+int l = left(i);//计算下标为i的节点的左子节点
+int r = right(i);//计算下标为i的节点的右子节点
+int largest;//保存i,l,r(即i和它的左右子节点)之间的最大数的下标
+int temp;//交互数组中的数所使用的临时变量
+//找到三个数当中最大的那个数，将最大的那个数和i进行互换
+if (l<=high && a[l]>a[i])
+{
+largest = l;
+}
+else{
+largest = i;
+}
+if (r<=high && a[r]>a[largest])
+{
+largest = r;
+}
+if (largest != i)
+{
+temp = a[i];
+a[i] = a[largest];
+a[largest] = temp;
+MaxHeapify(a, largest,low,high);//交换有可能破坏子树的最大堆性质，所以对所交换的那个子节点进行一次维护，而未交换的那个子节点，根据我们的假设，是保持着最大堆性质的。
+}
+}
+template<typename data>
+void BuildMaxHeap(vector<data> &a,int length)
+{
+for (int i = length / 2-1; i >= 0; i--)
+{
+MaxHeapify(a, i, 0, length - 1);
+}
+}
+template<typename data>
+void HeapSort(vector<data> &a,int length){
+int temp;
+BuildMaxHeap(a,length);
+for (int i = length - 1; i >= 1; i--)
+{
+//交换根节点和数组的最后一个节点
+temp = a[i];
+a[i] = a[0];
+a[0] = temp;
+MaxHeapify(a, 0, 0, i-1);//维护从下标为i-1到0的子数组
+}
+}
+
+//merge sort
+template<typename data>
+void Merge(vector<data> &a,int p, int q, int r)
+{
+int n1 = q - p + 1; //左部分的的元素个数
+int n2 = r - q; //同上
+int i, j, k;
+// int *L = new int[n1+1];
+
+vector<data> L(n1+1);
+vector<data> R(n2+1);
+//int *R = new int[n2+1];
+for(i=0;i<n1;i++)
+L[i]=a[p+i];
+for(j=0;j<n2;j++)
+R[j]=a[q+j+1];
+L[n1]=INT_MAX;
+R[n2]=INT_MAX;
+// 数组L从0~n1-1存放，第n1个存放int型所能表示的最大数，即认为正无穷，这是为了
+//处理合并时，比如当数组L中的n1个元素已经全部按顺序存进数组a中，只剩下数组R的
+//部分元素，这时因为R中剩下的元素全部小于11111111,则执行else语句，直接将剩下的
+//元素拷贝进a中。
+for(i=0,j=0,k=p;k<=r;k++)
+{
+if(L[i]<=R[j])
+a[k]=L[i++];
+else
+a[k]=R[j++];
+}
+}
+template<typename data>
+void MergeSort(vector<data> &a, int l, int r)
+{
+if(l<r)
+{
+int m = (l+r)/2;
+MergeSort(a,l,m);
+MergeSort(a,m+1,r);
+Merge(a,l,m,r);
+}
+}
+
+int main(){
+srand((int)time(NULL)); 
+int count = 10000;
+cout<<"数据个数:"<<count<<endl;
+vector<int> v(count);
+vector<int> vs(count);
+vector<int> vr(count);
+for (int i = 0; i < count; i++)
+{
+v[i] = rand()%(2*count);
+vs[i] = 10;
+vr[i] = count-i;
+}
+
+vector<int> v1(v);
+vector<int> v2(v);
+vector<int> v1r(vr);
+vector<int> v2r(vr);
+
+struct timeval tv;
+gettimeofday(&tv,NULL);
+long t1 = tv.tv_sec*1000000 + tv.tv_usec;
+//快速排序
+quicksort(v,0,v.size()-1);
+gettimeofday(&tv,NULL);
+long t2 = tv.tv_sec*1000000 + tv.tv_usec;
+cout<<"随机数据"<<endl;
+cout<<"\t改进的快速排序花费时间 (微秒):"<<t2-t1<<endl;
+
+//Heapsort
+gettimeofday(&tv,NULL);
+t1 = tv.tv_sec*1000000 + tv.tv_usec;
+HeapSort(v1, v1.size()); //for (auto &&i : v1) { cout<<i<<"\t"; }
+gettimeofday(&tv,NULL);
+t2 = tv.tv_sec*1000000 + tv.tv_usec;
+cout<<"\t堆排序花费时间 (微秒):"<<t2-t1<<endl;
+gettimeofday(&tv,NULL);
+t1 = tv.tv_sec*1000000 + tv.tv_usec;
+MergeSort(v2,0, v2.size()-1);
+gettimeofday(&tv,NULL);
+t2 = tv.tv_sec*1000000 + tv.tv_usec;
+cout<<"\t归并排序花费时间 (微秒):"<<t2-t1<<endl;
+
+cout<<"相同数据"<<endl;
+gettimeofday(&tv,NULL);
+t1 = tv.tv_sec*1000000 + tv.tv_usec;
+
+quicksort(vs,0,vs.size()-1);
+
+gettimeofday(&tv,NULL);
+t2 = tv.tv_sec*1000000 + tv.tv_usec;
+cout<<"\t改进的快速排序花费时间 (微秒):"<<t2-t1<<endl;
+
+gettimeofday(&tv,NULL);
+t1 = tv.tv_sec*1000000 + tv.tv_usec;
+HeapSort(vs, v1.size());
+
+gettimeofday(&tv,NULL);
+t2 = tv.tv_sec*1000000 + tv.tv_usec;
+cout<<"\t最大堆排序花费时间 (微秒):"<<t2-t1<<endl;
+
+gettimeofday(&tv,NULL);
+t1 = tv.tv_sec*1000000 + tv.tv_usec;
+MergeSort(vs,0, v2.size()-1);
+gettimeofday(&tv,NULL);
+t2 = tv.tv_sec*1000000 + tv.tv_usec;
+cout<<"\t归并排序花费时间 (微秒):"<<t2-t1<<endl;
+
+cout<<"逆序数据"<<endl;
+
+
+gettimeofday(&tv,NULL);
+t1 = tv.tv_sec*1000000 + tv.tv_usec;
+
+quicksort(vr,0,vr.size()-1);
+
+gettimeofday(&tv,NULL);
+t2 = tv.tv_sec*1000000 + tv.tv_usec;
+cout<<"\t改进的快速排序花费时间 (微秒):"<<t2-t1<<endl;
+// cout<<"endline"<<endl;
+// for (int i = 0; i < count; i++)
+// { 
+// cout<<vr[i]<<"\t";
+// }
+
+gettimeofday(&tv,NULL);
+t1 = tv.tv_sec*1000000 + tv.tv_usec;
+
+HeapSort(v1r, v1.size());
+
+gettimeofday(&tv,NULL);
+t2 = tv.tv_sec*1000000 + tv.tv_usec;
+cout<<"\t最大堆排序花费时间 (微秒):"<<t2-t1<<endl;
+
+gettimeofday(&tv,NULL);
+t1 = tv.tv_sec*1000000 + tv.tv_usec;
+MergeSort(v2r,0, v2.size()-1);
+gettimeofday(&tv,NULL);
+t2 = tv.tv_sec*1000000 + tv.tv_usec;
+cout<<"\t归并排序花费时间 (微秒):"<<t2-t1<<endl;
+
+return 0;
+}
+
+结果:
+数据个数:10000
+随机数据
+    改进的快速排序花费时间 (微秒):2296
+    堆排序花费时间 (微秒):3618
+    归并排序花费时间 (微秒):5621
+相同数据
+    改进的快速排序花费时间 (微秒):749749
+    最大堆排序花费时间 (微秒):329
+    归并排序花费时间 (微秒):5469
+逆序数据
+    改进的快速排序花费时间 (微秒):490959
+    最大堆排序花费时间 (微秒):3170
+    归并排序花费时间 (微秒):5746
+
+
+多线程排序:采用go语言实现
+
+package main
+
+import (
+    "fmt"
+    "go_code/alg/sort"
+    "math/rand"
+    "time"
+)
+
+const Limit = 20
+
+func main() {
+    r := rand.New(rand.NewSource(time.Now().UnixNano()))
+    count := 1000000
+    var cost time.Duration
+    s := &sort.SortHome{Limit: 30, A: make([]interface{}, count)}
+    v := make([]int, count)
+    vs := make([]int, count)
+    for i := 0; i < s.Len(); i++ {
+        s.A[i] = r.Intn(count)
+        v[i] = s.A[i].(int)
+        vs[i] = s.A[i].(int)
+    }
+    // fmt.Println("非并发")
+    // cost = s.QuickSort()
+    // fmt.Printf("cost=[%s]\n", cost)
+
+    // fmt.Println("并发")
+    // cost = s.QuickSort2()
+    // fmt.Printf("cost=[%s]\n", cost)
+
+    fmt.Println("混合")
+    start := time.Now()
+    QuickSort1(v, 0, len(v)-1)
+    insertSort(v, 0, len(v)-1)
+
+    cost = time.Since(start)
+    fmt.Printf("cost=[%s]\n", cost)
+
+}
+
+func part(A []int, p, r int) int {
+    x := A[r]
+    i := p - 1
+    for j := p; j < r; j++ {
+        if A[j] < x {
+            i++
+            A[i], A[j] = A[j], A[i]
+        }
+    }
+    A[i+1], A[r] = A[r], A[i+1]
+    return i + 1
+}
+
+func insertSort(A []int, p, r int) {
+    for j := p + 1; j <= r; j++ {
+        key := A[j]
+        i := j - 1
+        for i >= p && A[i] > key {
+            A[i+1] = A[i]
+            i--
+        }
+        A[i+1] = key
+    }
+}
+
+func QuickSort1(A []int, p, r int) {
+
+    if p < r {
+        if r-p < Limit {
+            insertSort(A, p, r)
+        } else {
+            q := part(A, p, r)
+
+            go QuickSort1(A, q+1, r)
+            go QuickSort1(A, p, q-1)
+        }
+    }
+}
+
+
+//"go_code/alg/sort"代码
+package sort
+
+import (
+    "sync"
+    "time"
+)
+
+type SortHome struct {
+    ss sync.WaitGroup //全局锁
+    Limit int // 划分quicksort 与 insertsort的界限
+    A []interface{} // 数据切片
+}
+
+func (s *SortHome) Len() int { return len(s.A) }
+func (s *SortHome) Less(a, b interface{}) bool { return a.(int) < b.(int) }
+
+//非并发
+func (s *SortHome) QuickSort() time.Duration {
+    start := time.Now()
+    s.quicksort1(s.A, 0, s.Len()-1)
+    cost := time.Since(start)
+    return cost
+}
+
+//并发 并返回运行时间
+func (s *SortHome) QuickSort2() time.Duration {
+    start := time.Now()
+    s.ss.Add(1)
+    s.quicksort(s.A, 0, s.Len()-1)
+    s.ss.Wait()
+    cost := time.Since(start)
+    return cost
+}
+func (s *SortHome) quicksort(A []interface{}, p, r int) {
+    defer s.ss.Done()
+    if p < r {
+        if r-p < s.Limit {
+            s.insertSort(A, p, r)
+        } else {
+            q := s.part(A, p, r)
+            s.ss.Add(2)
+            go s.quicksort(A, q+1, r)
+            go s.quicksort(A, p, q-1)
+        }
+    }
+}
+func (s *SortHome) insertSort(A []interface{}, p, r int) {
+    for j := p + 1; j <= r; j++ {
+        key := A[j]
+        i := j - 1
+        for i >= p && s.Less(key, A[i]) {
+            A[i+1] = A[i]
+            i--
+        }
+        A[i+1] = key
+    }
+}
+func (s *SortHome) part(A []interface{}, p, r int) int {
+    x := A[r]
+    i := p - 1
+    for j := p; j < r; j++ {
+        if s.Less(A[j], x) {
+            i++
+            A[i], A[j] = A[j], A[i]
+        }
+    }
+    A[i+1], A[r] = A[r], A[i+1]
+    return i + 1
+}
+func (s *SortHome) quicksort1(A []interface{}, p, r int) {
+    if p < r {
+        if r-p < s.Limit {
+            s.insertSort(A, p, r)
+        } else {
+            q := s.part(A, p, r)
+            s.quicksort1(A, q+1, r)
+            s.quicksort1(A, p, q-1)
+        }
+    }
+}
+
+func (s *SortHome) MoreQuickSort() time.Duration {
+    start := time.Now()
+    s.morequicksort(0, s.Len()-1)
+    s.insertSort(s.A, 0, s.Len()-1)
+    return time.Since(start)
+}
+
+func (s *SortHome) morequicksort(p, r int) {
+    if p < r {
+        if r-p < s.Limit {
+            s.insertSort(s.A, p, r)
+        } else {
+            q := s.part(s.A, p, r)
+            go s.morequicksort(p, q-1)
+            go s.morequicksort(q+1, r)
+        }
+    }
+}
+
+结果:
+数据个数 10000000
+并发
+cost=[1.544416728s]
+混合
+cost=[753.367257ms]

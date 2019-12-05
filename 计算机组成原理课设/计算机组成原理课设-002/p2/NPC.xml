@@ -1,0 +1,17 @@
+<interfaceDefinition version='1.2' language='verilog' kind='module' name='NPC'>
+    <portList>
+
+      <port name='pc' direction='input' type='[31:0]' kind='array' packedDimension='[31:0]'> </port>
+      <port name='instr_index' direction='input' type='[25:0]' kind='array' packedDimension='[25:0]'> </port>
+      <port name='gpr_rs' direction='input' type='[31:0]' kind='array' packedDimension='[31:0]'> </port>
+      <port name='target' direction='input' type='[15:0]' kind='array' packedDimension='[15:0]'> </port>
+      <port name='j' direction='input' type='' kind=''> </port>
+      <port name='jal' direction='input' type='' kind=''> </port>
+      <port name='jr' direction='input' type='' kind=''> </port>
+      <port name='beq' direction='input' type='' kind=''> </port>
+      <port name='flag_zero' direction='input' type='' kind=''> </port>
+      <port name='npc' direction='output' type='[31:0]' kind='array' packedDimension='[31:0]'> </port>
+      <port name='jal_out' direction='output' type='[31:0]' kind='array' packedDimension='[31:0]'> </port>
+
+    </portList>
+</interfaceDefinition>

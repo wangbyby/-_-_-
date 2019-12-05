@@ -1,0 +1,8 @@
+<interfaceDefinition version='1.2' language='verilog' kind='module' name='IM'>
+    <portList>
+
+      <port name='address' direction='input' type='[31:0]' kind='array' packedDimension='[31:0]'> </port>
+      <port name='outIns' direction='output' type='[31:0]' kind='array' packedDimension='[31:0]'> </port>
+
+    </portList>
+</interfaceDefinition>

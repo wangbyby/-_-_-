@@ -1,0 +1,113 @@
+module Controll(
+    input [5:0] op,
+    input [5:0] order_func,
+    output reg [3:0] sel_ALU,
+    output  reg beq,Extop,j,jal,jr,lui,rd,imm_to_ALU,GPR_write, RAM_write, RAM_to_GPR
+);
+// beq 指令
+// Extop 符号拓展
+//j 指令
+//jr 指令
+
+// lui 指令
+//wire [5:0] op ,order_func;
+//assign op = order[31:26];
+//assign order_func = order[5:0];
+initial
+begin
+  sel_ALU = 'b0000;
+  {beq,Extop,j,jal,jr,lui,rd,imm_to_ALU,GPR_write, RAM_write, RAM_to_GPR} = 'b 0;
+end
+always @(*) begin
+    case(op)
+        6'b000000: begin // r 
+            rd = 1'b1;
+            GPR_write = 1'b1;
+            if (order_func == 'b101010) begin // slt
+                sel_ALU = 'b0110;
+                end
+            else if (order_func == 'b100001) begin // addu
+                sel_ALU = 'b0000;
+                end
+            else if(order_func == 'b100011) begin // subu
+                sel_ALU = 'b0100;
+                end
+            else if (order_func == 'b001000) begin //jr
+                jr = 1'b1;
+                end
+            else begin // 其他
+                sel_ALU = 'b0000;
+                end
+            end
+        6'b001000: //addi
+            begin
+            rd = 1'b0;
+            sel_ALU = 'b0011;
+            imm_to_ALU = 1'b1;
+            GPR_write = 1'b1;
+            end
+        6'b001001:    //addiu
+            begin
+            rd = 1'b0;
+            sel_ALU = 'b0001;
+            imm_to_ALU = 1'b1;
+            GPR_write = 1'b1;
+            end
+        6'b000100:    //beq
+        begin
+            sel_ALU = 'b0100;
+            beq = 1'b1;
+            end
+        6'b001111:    //lui
+        begin
+            rd = 1'b0;
+            sel_ALU = 'b0111;
+            lui = 1'b1;
+            imm_to_ALU = 1'b1;
+            GPR_write = 1'b1;
+            end
+        6'b100011:    //lw
+          begin
+            rd = 1'b0;
+            sel_ALU = 'b0010;
+            imm_to_ALU = 1'b1;
+            RAM_to_GPR = 1'b1;
+            GPR_write = 1'b1;
+            Extop = 1'b1;
+            end
+        6'b001101:    //ori
+          begin
+            sel_ALU = 'b0101;
+            GPR_write = 1'b1;
+            imm_to_ALU = 1'b1;
+            rd = 1'b0;
+            end
+        6'b101011:    //sw
+          begin
+            sel_ALU = 'b0010;
+            imm_to_ALU = 1'b1;
+            RAM_write = 1'b1;
+            Extop = 1'b1;
+            rd = 1'b0;
+            end
+        6'b000010:
+            //j
+            begin
+            j = 1'b1;
+            rd = 1'b0;
+            end
+        6'b000011:    //jal
+            begin 
+            rd = 1'b0;
+            jal = 1'b1;
+          end
+    default: begin
+            j = 'b0;
+          rd = 1'b0;
+          jal = 0;
+          jr = 0;
+          end
+    endcase
+end
+
+endmodule // Controll

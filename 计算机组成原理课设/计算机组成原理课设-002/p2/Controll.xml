@@ -1,0 +1,20 @@
+<interfaceDefinition version='1.2' language='verilog' kind='module' name='Controll'>
+    <portList>
+
+      <port name='op' direction='input' type='[5:0]' kind='array' packedDimension='[5:0]'> </port>
+      <port name='order_func' direction='input' type='[5:0]' kind='array' packedDimension='[5:0]'> </port>
+      <port name='sel_ALU' direction='output' type='[3:0]' kind='regvector' packedDimension='[3:0]'> </port>
+      <port name='beq' direction='output' type='reg' kind=''> </port>
+      <port name='Extop' direction='output' type='reg' kind=''> </port>
+      <port name='j' direction='output' type='reg' kind=''> </port>
+      <port name='jal' direction='output' type='reg' kind=''> </port>
+      <port name='jr' direction='output' type='reg' kind=''> </port>
+      <port name='lui' direction='output' type='reg' kind=''> </port>
+      <port name='rd' direction='output' type='reg' kind=''> </port>
+      <port name='imm_to_ALU' direction='output' type='reg' kind=''> </port>
+      <port name='GPR_write' direction='output' type='reg' kind=''> </port>
+      <port name='RAM_write' direction='output' type='reg' kind=''> </port>
+      <port name='RAM_to_GPR' direction='output' type='reg' kind=''> </port>
+
+    </portList>
+</interfaceDefinition>

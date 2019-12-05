@@ -1,0 +1,162 @@
+#include <iostream>
+#include <string>
+#include <list>
+using namespace std;
+// 中缀 转后缀 然后求值
+
+int pri(const char c)
+{
+    switch (c)
+    {
+    case '#':
+        return 0;
+    case ')':
+        return 5;
+    case '+':
+        return 2;
+    case '-':
+        return 3;
+    case '*':
+        return 5;
+    case '/':
+        return 5;
+    case '(':
+        return 5;
+    default:
+        return -1;
+    case ' ':
+        return 1;
+    }
+}
+float Compute(float a, float b, string c)
+{
+    float res = 0;
+    if (c == "+")
+    {
+        res = a + b;
+    }
+    else if (c == "-")
+    {
+        res = a - b;
+    }
+    else if (c == "*")
+    {
+        res = a * b;
+    }
+    else if (c == "/")
+    {
+        res = a / b;
+    }
+    else
+    {
+        res = -1;
+    }
+    return res;
+}
+int main()
+{
+    string s1 = "50.6+2*((-1)*2+10+(-1)*5)#";
+    list<float> num;
+    num.push_back(0);
+    string s2 = "";
+    string tmp = "";
+    list<char> op;
+    for (float i = 0; i < s1.size(); i++)
+    {
+        if (pri(s1[i]) == -1)
+        { // is number
+            tmp += s1[i];
+            cout << "tmp=" << tmp << endl;
+        }
+        else
+        {
+            if (tmp != "")
+            {
+                s2 += tmp + "#";
+            }
+            cout << "s2=" << s2 << endl;
+            tmp = "";
+            if (s1[i] == '-' && s1[i - 1] == '(')
+            {
+                s2 += "0#";
+                cout << "s2 first=" << s2 << endl;
+            }
+
+            if (s1[i] == ')')
+            {
+                while (op.back() != '(')
+                {
+                    s2 += op.back();
+                    op.pop_back();
+                }
+                op.pop_back();
+            }
+            else if (s1[i] == '(')
+            {
+                op.push_back(s1[i]);
+            }
+            else if (pri(s1[i]) != -1 && pri(s1[i]) != 0)
+            {
+
+                while (op.back() != '(' && pri(op.back()) > pri(s1[i]) && !op.empty())
+                {
+                    s2 += op.back();
+                    op.pop_back();
+                }
+                op.push_back(s1[i]);
+            }
+            else
+            {
+                while (!op.empty())
+                {
+                    s2 += op.back();
+                    op.pop_back();
+                }
+            }
+        }
+    }
+    while (!op.empty())
+    {
+        if (op.back() != '#')
+        {
+            s2 += op.back();
+        }
+        op.pop_back();
+    }
+    cout << "last s2=" << s2 << endl;
+    tmp = "";
+
+    list<float> arrL;
+    for (int i = 0; i < s2.size(); i++)
+    {
+        if (s2[i] == '#')
+        {
+            tmp.reserve();
+            arrL.push_back(atof(tmp.c_str()));
+            tmp = "";
+            continue;
+        }
+        if (pri(s2[i]) == -1)
+        {
+            tmp += s2[i];
+        }
+        else
+        {
+            float tmp1 = arrL.back();
+            //cout<<"tmp1 = "<<tmp1<<endl;
+            arrL.pop_back();
+
+            float tmp2 = arrL.back();
+            //cout<<"tmp2 = "<<tmp2<<endl;
+            arrL.pop_back();
+            string tmps = "";
+            tmps += s2[i];
+            float tmp3 = Compute(tmp2, tmp1, tmps);
+            cout << "\ttmp3=" << tmp3 << endl;
+            arrL.push_back(tmp3);
+        }
+    }
+    cout << "原来的string = " << s1 << endl;
+    cout << "result=" << arrL.back() << endl;
+    return 0;
+}

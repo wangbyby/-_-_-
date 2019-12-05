@@ -1,0 +1,428 @@
+#include<iostream>
+#include<vector>
+#include<set>
+#include<map>
+#include<list>
+#include<float.h>
+#include <regex>
+#include <string>
+#include <fstream>
+using namespace std;
+#define max 100;
+template<typename data> // 最小堆
+struct Heap
+{
+    vector<data> v;
+    int size;
+    int left(int i) {
+        return 2*i + 1;
+    }
+    int right(int i ){
+        return 2*i + 2;
+    }
+    void keepmin(int i) {
+        int min;
+        int l = left(i);
+        int r = right(i);
+        if (l < size && v[l] < v[i])
+        {
+            min = l;
+        }else
+        {
+            min = i;
+        }
+        if (r < size && v[r] < v[min])
+        {
+            min = r;
+        }
+        if (min != i)
+        {
+            swap(v[i],v[min]);
+			keepmin(min);
+        }
+    }
+    
+    void buildHeap(vector<data> a) {
+        if (v.size()!=0)
+        {
+            v.clear();
+        }
+		for (auto &&i : a)
+		{
+			v.push_back(i);
+		}
+        size = a.size() ;
+		
+        for (int i = a.size()/2; i >=0; i--)
+        {
+            keepmin(i);
+        }
+    }
+
+    void reheapSort(vector<data> a) { //逆序
+		buildHeap(a);
+        for (auto &&i : v)
+		{
+			cout<<i<<endl;
+		}
+        for (int i = v.size()-1; i >= 1; i--)
+        {
+            swap(v[0],v[i]);
+            size--;
+            keepmin(0);
+        }
+    }
+    vector<data> heapSort(vector<data> a) { //正序
+        reheapSort(a);
+        vector<data> vv;
+        for (int i = a.size() - 1; i >= 0; i--)
+        {
+            vv.push_back(v[i]);
+        }
+        return vv;
+    }
+    int par(int i ){ return (i-1)/2 ;}
+    void up(int i ) // 上移
+    {
+        int p = par(i);
+        if ( 0<=p && v[i] < v[p])
+        {
+            swap(v[i],v[p]);
+            up(p);
+        }
+        
+    }
+    void push(data d){
+        v.push_back(d);
+
+        size = v.size();
+        up(v.size()-1);
+        
+    } 
+    data pop() {
+        keepmin(0);
+        data x;
+        x = v[0];
+        swap(v[0],v.back());
+        v.pop_back();
+        size = v.size();
+        keepmin(0);
+        
+        return x;
+    }
+};
+template<typename datatype>
+int partition(vector<datatype>& A ,int p,int r){
+    datatype x = A[r];
+    int i = p-1;
+    int j= 0;
+    for ( j = p; j < r; j++)
+    {
+        if (A[j] >= x)
+        {
+            i++;
+            swap(A[i],A[j]);
+        }
+        
+    }
+    swap(A[i+1],A[j]);
+    return i+1;
+}
+template<typename datatype>
+void quicksort(vector<datatype>& vec ,int p ,int r){
+    if( p < r) {
+        int q = partition(vec,p,r);
+        quicksort(vec,p,q-1);
+        quicksort(vec,q+1,r);
+    }
+}
+
+struct Edge
+{
+    int from,to;
+    float weight;
+    bool operator>=(const Edge &b){
+        if (weight>=b.weight)
+        {
+            return true;
+        }
+        return false;
+    } 
+    bool operator<(const Edge &b) {
+        if (weight<b.weight)
+        {
+            return true;
+        }
+        return  false;
+    }
+};
+
+vector<vector<float>> readM(){
+    vector<float> temp_line;
+    vector<vector<float>> Vec_Dti;
+    string line;
+    ifstream in("xxx.txt");  //读入文件
+    regex pat_regex("[[:digit:]]+");  //匹配原则，这里代表一个或多个数字
+
+    while(getline(in, line)) {  //按行读取
+        for (sregex_iterator it(line.begin(), line.end(), pat_regex), end_it; it != end_it; ++it) {  //表达式匹配，匹配一行中所有满足条件的字符
+           // cout << it->str() << " ";  //输出匹配成功的数据
+            temp_line.push_back(stoi(it->str()));  //将数据转化为int型并存入一维vector中
+        }
+       // cout << endl;
+        Vec_Dti.push_back(temp_line);  //保存所有数据
+        temp_line.clear();
+    }
+    return Vec_Dti;
+}
+
+struct Graph
+{
+    //表示图
+    vector<vector<float>> vec;
+    //边集
+    set<Edge> eset;
+    set<Edge>::iterator it;
+    int vnum;
+    //点集
+    set<int> vset;
+
+    vector<Edge> allEdge() {
+        vector<Edge> v;
+        for (int j = 0; j < vnum; j++)
+        {
+            for (int i = 0; i < j;  i++)
+            {
+                if ( i!=j) {
+                    Edge e;
+                    e.from = i;
+                    e.to = j;
+                    e.weight = vec[i][j];
+                    v.push_back(e);
+                }
+            }
+            
+            
+        }
+        return v;
+    }
+    //test ok 
+    vector<Edge> Prim(int r) {
+        int rr= r;
+        vector<Edge> vvv , l;
+        set<int> s,t;
+        set<int>::iterator its;
+        set<int>::iterator it2;
+        s.insert(r);
+        t = vset;
+        t.erase(r);
+        l = allEdge();
+        quicksort(l,0,l.size()-1);
+        // for (auto &&i : l)
+        // {
+        //     cout<<"#"<<i.weight<<"\t";
+        // }
+        
+        while (true)
+        {   
+            if (t.empty())
+            {
+                break;
+            }
+            
+            Edge e = l.back();
+            // cout<<e.from<<e.to<<e.weight<<endl;
+            l.pop_back();
+            its = s.find(e.to);
+            it2 = s.find(e.from);
+            if ( !(its != s.end() && it2 != s.end())) //e.to 不在 s 中
+            {
+                s.insert(e.to);
+                s.insert(e.from);
+                t.erase(e.to);
+                t.erase(e.from);
+                
+                rr = e.to;
+                vvv.push_back(e);
+            }
+        }
+        return vvv;
+    }
+    int getMin(map<int,float> & m) {
+        vector<Edge> vv(0);
+        int u ;
+        float min = m.begin()->second;
+        for (auto &&i : m)
+        {
+            if ( i.second < min)
+            {
+                min = i.second;
+                u = i.first;
+            }
+            
+        }
+        m.erase(u);
+        return u;
+    }
+    //  test ok 
+    map<int,float> adj(int u) {
+        map<int,float> v;
+        for (int i = 0; i < vnum; i++)
+        {
+            if (i!=u && vec[u][i] != 100)
+            {
+                v[i] = vec[u][i];   
+            }
+        }
+        return v;
+    }
+
+    //test ok 
+    vector<vector<float>> Floyd(){
+        vector<vector<float>> A(vec);
+        int count = vnum;
+        for (int i = 0; i < count; i++) {
+            for(int j = 0;j< count;j++) {
+                for(int k = 0;k<count;k++){
+                    if (A[j][k] > A[j][i]+A[i][k])
+                    {
+                        A[j][k] = A[j][i]+A[i][k];
+                    }
+                }
+            }
+        }
+        return A;
+    }
+
+    float weight(int a, int b) {
+        return vec[a][b];
+    }
+    void DD(int s,int t) {
+        //init
+        Heap<Edge> *h = new Heap<Edge>;
+        map<int, float> d;
+        map<int,int>pre;
+        for (int i = 0; i < vnum; i++)
+        {
+            Edge e;
+            e.from = -1;
+            e.to = i;
+            e.weight = 100;
+            h->v.push_back(e);
+            d[i] = 100;
+            pre[i] = -1;
+        }
+        
+        h->v[s].weight = 0;
+        h->buildHeap(h->v); 
+        //init end
+        int v = s;
+        int u =s;
+        d[u] = 0;
+        pre[u] = 0;
+        while (h->v.size() !=0 )
+        {
+            Edge e = h->pop();
+            
+            // cout<<"pop e"<<e.to<<"$"<<e.weight<<"\t";
+            u = e.to;
+            
+            for (auto &&i : adj(u))
+            {
+                v = i.first;
+                //cout<<u<<"->"<<v<<"#"<<i.second<<"\t";
+                if (d[v]>d[u]+i.second)
+                {
+                    d[v] = d[u] + i.second;
+                    pre[v] = u;
+                
+                }
+            }
+            for (int j = 0; j < h->v.size(); j++)
+            {
+                for (auto &&i : d)
+                {
+                    if (i.first == h->v[j].to)
+                    {
+                        h->v[j].weight = i.second;
+                        
+                    }
+                    
+                }
+                
+            }
+
+            // for (int i = 0; i < h->v.size(); i++)
+            // {
+            //     cout<<h->v[i].to<<"->"<< h->v[i].weight<<"\t";
+            // }cout<<endl;
+        }
+        int tmp = t ;
+        list<int> ll;
+        while ( s!=tmp)
+        {
+            ll.push_back(tmp);
+            tmp = pre[tmp];
+        }
+        ll.push_back(s);
+        while (ll.size()!=1)
+        {
+            cout<<ll.back()<<"-->";
+            ll.pop_back();
+        }
+        cout<<ll.back()<<"权重为:"<<d[t];
+    
+        cout<<endl;
+    }
+};
+
+
+int main(){
+    //init
+    Graph * g= new Graph;
+    cout<<"100代表无穷大"<<endl;
+    g->vec = readM();
+    int n = g->vec[0].size();
+    g->vnum = n;
+    cout<<"初始矩阵"<<endl;
+    for (auto &&i : g->vec)
+    {
+        for (auto &&j : i)
+        {
+            cout<<j<<"\t";
+        }
+        cout<<endl;
+    }
+    
+    for (int i = 0; i < n; i++)
+    {
+        g->vset.insert(i);
+    }
+    
+    // //init end
+    // // 
+    auto A = g->Floyd();
+    cout<<"floyd"<<endl;
+    for (auto &&i : A)
+    {
+        for (auto &&j : i)
+        {
+            cout<<j<<"\t";
+        }
+        cout<<endl;
+    }
+    auto B = g->Prim(0);
+    cout<<"Prim"<<endl;
+    for (auto &&i : B)
+    {
+        cout<<i.from<<"->"<<i.to<<"$"<<i.weight<<endl;
+    }
+    cout<<"dikstra"<<endl;
+    for (int i = 1; i < g->vnum; i++)
+    {
+        g->DD(0,i);
+
+    }
+    
+    return 0;
+}   

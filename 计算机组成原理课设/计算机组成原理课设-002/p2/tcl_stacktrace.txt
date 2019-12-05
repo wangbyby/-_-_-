@@ -1,0 +1,42 @@
+Tue Apr 16 14:56:37 ?????? 2019
+Trace back: D:/BaiduNetdiskDownload/win32/vlog failed.
+    while executing
+"vlog -work work alu_tb.v"
+    ("eval" body line 1)
+    invoked from within
+"eval $compiler_name -work [$compile_tb_lib_w get] [tb_fname_w get]"
+    (object "::HTE::Editor::srcWizard::wiz_obj6" method "::TestbenchWizard::finish" body line 17)
+    invoked from within
+"::HTE::Editor::srcWizard::wiz_obj6 finish"
+    invoked from within
+".tb_wiz_widget_name.buttons.next invoke"
+    ("uplevel" body line 1)
+    invoked from within
+"uplevel #0 [list $w invoke]"
+    (procedure "tk::ButtonUp" line 24)
+    invoked from within
+"tk::ButtonUp .tb_wiz_widget_name.buttons.next"
+    (command bound to event)
+  <2: ::tkerror {D:/BaiduNetdiskDownload/win32/vlog failed.}
+  <1: ::bgerror {D:/BaiduNetdiskDownload/win32/vlog failed.}
+Tue Apr 16 14:57:40 ?????? 2019
+Trace back: D:/BaiduNetdiskDownload/win32/vlog failed.
+    while executing
+"vlog -work work alu_tb.v"
+    ("eval" body line 1)
+    invoked from within
+"eval $compiler_name -work [$compile_tb_lib_w get] [tb_fname_w get]"
+    (object "::HTE::Editor::srcWizard::wiz_obj6" method "::TestbenchWizard::finish" body line 17)
+    invoked from within
+"::HTE::Editor::srcWizard::wiz_obj6 finish"
+    invoked from within
+".tb_wiz_widget_name.buttons.next invoke"
+    ("uplevel" body line 1)
+    invoked from within
+"uplevel #0 [list $w invoke]"
+    (procedure "tk::ButtonUp" line 24)
+    invoked from within
+"tk::ButtonUp .tb_wiz_widget_name.buttons.next"
+    (command bound to event)
+  <2: ::tkerror {D:/BaiduNetdiskDownload/win32/vlog failed.}
+  <1: ::bgerror {D:/BaiduNetdiskDownload/win32/vlog failed.}
