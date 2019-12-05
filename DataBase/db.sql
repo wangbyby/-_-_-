@@ -1,6 +1,6 @@
 --pgsql
 create database steam;
-\c steam;
+
 --游戏发行商
 --一般来说 发行商与开发商 不一样
 create table gc(
@@ -174,29 +174,29 @@ insert into com_con(gname,cid) values('Destiny2',8);
 
 
 --简单查询
-select (gcname,gname) from issue ;
+select gcname,gname from issue ;
 select * from own ;
 --选择表中若干数组
-select (gcname,gname) from issue where gcname='Valve';
-select * from own where uname='wby';
+select gcname,gname from issue where gcname='Valve';
+select uname,gname,bprice from own where uname='wby';
 
 --对查询结果排序
-select (uname,ulevel) from player order by ulevel;
-select (uname,gname,lrt,bt) from own where uname='cy' order by lrt-bt;
-
+select uname,ulevel from player order by ulevel;
+select uname,gname,lrt,bt, (lrt-bt) as playtime from own where uname='wby' order by lrt-bt;
+select uname,gname,lrt,bt, (lrt-bt) as playtime from own where uname='wby' order by lrt-bt desc;
 --计算函数汇总
-select SUM(bprice) from own where uname='cy';
-
+select  SUM(bprice)as prices from own where own.uname='wby';
+select  max(current_timestamp - bt) as owntime from own;
 --分组计算
-select (uname, Max(bprice)) from own group by uname;
-
+select uname, Max(bprice) from own group by uname;
+select own.uname, min( (now()-lrt))as not_playtime from own group by own.uname;
 --多表连接查询
-select * from own  inner join player on own.uname=player.uname; 
-select (own.uname,own.gname,own.bprice,own.btype) from own cross join game  where own.bprice=game.price;
-
+select issue.gname,issue.iinfo,issue.itype from  own  inner join issue on own.gname=issue.gname; 
+select * from own cross join game where own.bprice=game.price and own.gname=game.gname order by own.lrt;
 --9
-insert into own(uname,gname,lrt,bt,btype,bprice) values ('wby','POSTAL2');
-insert into game(gname,price) values ('Insurgency:SandStorm', 50);
+insert into own(uname,gname,lrt,bt,btype,bprice) values ('wby','POSTAL2','2017-12-13','2017-9-27','支付宝',3);
+
+insert into issue(gcname,gname,itime,itype) values ('NewWorld','Insurgency:SandStorm','2018-6-10', 'FPS');
 
 --
 update player SET upwd='gog$name' where uname='yc';
