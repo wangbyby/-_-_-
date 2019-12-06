@@ -1,101 +1,79 @@
 package sort
 
-import (
-	"sync"
-	"time"
-)
+func generateSlice(size int) Array {
 
-type SortHome struct {
-	ss    sync.WaitGroup //全局锁
-	Limit int            // 划分quicksort 与 insertsort的界限
-	A     []interface{}  // 数据切片
+	slice := make(Array, size, size)
+	rand.Seed(time.Now().UnixNano())
+	for i := 0; i < size; i++ {
+		slice[i] = rand.Intn(999) - rand.Intn(999)
+	}
+	return slice
 }
 
-func (s *SortHome) Len() int                   { return len(s.A) }
-func (s *SortHome) Less(a, b interface{}) bool { return a.(int) < b.(int) }
+//希尔排序...不懂(＠_＠;)
+//shell sort
+func Shellsort(items []int) {
+	var (
+		n    = len(items)
+		gaps = []int{1}
+		k    = 1
+	)
 
-//非并发
-func (s *SortHome) QuickSort() time.Duration {
-	start := time.Now()
-	s.quicksort1(s.A, 0, s.Len()-1)
-	cost := time.Since(start)
-	return cost
-}
+	for {
+		gap := element(2, k) + 1
+		if gap > n-1 {
+			break
+		}
+		gaps = append([]int{gap}, gaps...)
+		k++
+	}
 
-//并发 并返回运行时间
-func (s *SortHome) QuickSort2() time.Duration {
-	start := time.Now()
-	s.ss.Add(1)
-	s.quicksort(s.A, 0, s.Len()-1)
-	s.ss.Wait()
-	cost := time.Since(start)
-	return cost
-}
-func (s *SortHome) quicksort(A []interface{}, p, r int) {
-	defer s.ss.Done()
-	if p < r {
-		if r-p < s.Limit {
-			s.insertSort(A, p, r)
-		} else {
-			q := s.part(A, p, r)
-			s.ss.Add(2)
-			go s.quicksort(A, q+1, r)
-			go s.quicksort(A, p, q-1)
+	for _, gap := range gaps {
+		for i := gap; i < n; i += gap {
+			j := i
+			for j > 0 {
+				if items[j-gap] > items[j] {
+					items[j-gap], items[j] = items[j], items[j-gap]
+				}
+				j = j - gap
+			}
 		}
 	}
 }
-func (s *SortHome) insertSort(A []interface{}, p, r int) {
-	for j := p + 1; j <= r; j++ {
-		key := A[j]
-		i := j - 1
-		for i >= p && s.Less(key, A[i]) {
-			A[i+1] = A[i]
-			i--
+func element(a, b int) int {
+	e := 1
+	for b > 0 {
+		if b&1 != 0 {
+			e *= a
 		}
-		A[i+1] = key
+		b >>= 1
+		a *= a
 	}
-}
-func (s *SortHome) part(A []interface{}, p, r int) int {
-	x := A[r]
-	i := p - 1
-	for j := p; j < r; j++ {
-		if s.Less(A[j], x) {
-			i++
-			A[i], A[j] = A[j], A[i]
-		}
-	}
-	A[i+1], A[r] = A[r], A[i+1]
-	return i + 1
-}
-func (s *SortHome) quicksort1(A []interface{}, p, r int) {
-	if p < r {
-		if r-p < s.Limit {
-			s.insertSort(A, p, r)
-		} else {
-			q := s.part(A, p, r)
-			s.quicksort1(A, q+1, r)
-			s.quicksort1(A, p, q-1)
-		}
-	}
+	return e
 }
 
-func (s *SortHome) MoreQuickSort() time.Duration {
-	start := time.Now()
-	s.morequicksort(0, s.Len()-1)
-	s.insertSort(s.A, 0, s.Len()-1)
-	return time.Since(start)
+type Array []int
+
+func (a Array) Swap(i, j int) {
+	a[i], a[j] = a[j], a[i]
 }
 
-func (s *SortHome) morequicksort(p, r int) {
-	if p < r {
-		if r-p < s.Limit {
-			s.insertSort(s.A, p, r)
-		} else {
-			q := s.part(s.A, p, r)
-			go s.morequicksort(p, q-1)
-			go s.morequicksort(q+1, r)
-		}
-	}
+func (a Array) Len() int {
+	return len(a)
+}
+func (a Array) Less(i, j int) bool {
+	return a[i] < a[j]
+}
+
+//只对向量
+type Interface interface {
+	Swap(i, j int)
+	Len() int
+	Less(a, b int) bool
+}
+
+func Sort(qs Interface) {
+	quicksort1(qs, 0, qs.Len()-1)
 }
 
 // func part(A []int, p, r int) int {
@@ -110,6 +88,38 @@ func (s *SortHome) morequicksort(p, r int) {
 // 	A[i+1], A[r] = A[r], A[i+1]
 // 	return i + 1
 // }
+func part(qs Interface, p, r int) int {
+	//若以r为主键下标
+	i := p - 1
+	for j := p; j < r; j++ {
+		if qs.Less(j, r) {
+			i++
+			qs.Swap(i, j)
+		}
+	}
+	qs.Swap(i+1, r)
+	return i + 1
+}
+
+func quicksort1(A Interface, p, r int) {
+	if p < r {
+		if r-p < 20 {
+			insertSort(A, p, r)
+		} else {
+			q := part(A, p, r)
+			quicksort1(A, q+1, r)
+			quicksort1(A, p, q-1)
+		}
+	}
+}
+
+func quickSort(qs Interface, p, r int) {
+	if p < r {
+		q := part(qs, p, r)
+		quickSort(qs, q+1, r)
+		quickSort(qs, p, q-1)
+	}
+}
 
 // func insertSort(A []int, p, r int) {
 // 	for j := p + 1; j <= r; j++ {
@@ -124,16 +134,52 @@ func (s *SortHome) morequicksort(p, r int) {
 
 // }
 
-// func QuickSort1(A []int, p, r int) {
+func insertSort(qs Interface, p, r int) {
+	for j := p + 1; j <= r; j++ {
+		for i := j; i > p && qs.Less(i, i-1); i-- {
+			qs.Swap(i, i-1)
+		}
 
-// 	if p < r {
-// 		if r-p < 30 { //30是试出来的
-// 			insertSort(A, p, r)
-// 		} else {
-// 			q := part(A, p, r)
+	}
+}
 
-// 			go QuickSort1(A, q+1, r)
-// 			go QuickSort1(A, p, q-1)
-// 		}
-// 	}
-// }
+func HeapSort(data Interface) {
+	buildHeap(data)
+	size := data.Len()
+	for i := size - 1; i >= 1; i-- {
+		data.Swap(0, i)
+		size--
+		siftUp(data, 0, size)
+	}
+	//for循环完是从大到小
+
+	//转换为从小到大
+	size = data.Len()
+	for i := 0; i < size>>1; i++ {
+		data.Swap(i, size-1-i)
+	}
+}
+
+//最小堆 minheap
+func BuildHeap(data Interface) {
+	lenData := data.Len()
+	for i := data.Len() >> 1; i >= 0; i-- {
+		siftUp(data, i, lenData)
+	}
+}
+
+func siftUp(data Interface, i, size int) {
+	min := i
+	l := i<<1 + 1
+	r := (i + 1) << 1
+	if l < size && data.Less(l, i) {
+		min = l
+	}
+	if r < size && data.Less(r, min) {
+		min = r
+	}
+	if min != i {
+		data.Swap(min, i)
+		siftUp(data, min, size)
+	}
+}
