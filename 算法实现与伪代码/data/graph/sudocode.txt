@@ -1,0 +1,121 @@
+////sudo code of some basic graph alg
+//G为图
+//w为权重关系
+
+Dijkstra(G,w,s )
+			d //距离
+			
+			//init
+			for i in G.E
+				d[i] = inf
+			d[s] = 0
+			
+			//minheap Q
+			Q = G.E  
+			Q.Buildheap
+			for len(Q)!=0 {
+				u = Q.popmin
+				for v in adj(u) {
+					//relax
+					if d[v] > d[u] + w(u,v){
+						d[v] = d[u] + w(u,v)
+					}
+				}
+
+FloydWarshell(W) // W 为 n*n矩阵
+	n = W.rows
+	D = W
+	for k = 1 to n
+		for i =1 to n
+			for j =1 to n
+				D[i][j] = min( D[i][j] , D[i][k]  + D[k][j] )
+
+	return D
+
+
+
+//Deep First Search
+ved // 记录已经遍历过点 1为遍历过 0为没有遍历
+DFS(g,s)
+	//s为起始点
+	ved[s] = 1
+	for v in adj(s)
+		if ved[v] ==0 
+			DFS(g,v)
+
+//Brand First Search
+BFS(g,s)
+	ved[s] = 1
+ 	q = Queue //队列
+	q.push(s)
+	while q != nil // 不为空集 
+		e = q.pop()
+		for v in adj(e)
+			ved[e] = 1
+			q.push(v)
+
+//负环检测
+Bellmanford(G,w,s)
+	init(G,s)
+
+	for i =1 to |G.V| -1
+		for (u,v) in G.E
+			Relax(u,v,w)
+
+	for (u,v) in G.E
+		if v.d > u.d + w(u,v)
+			return flase
+	return true
+
+
+//最小生成树
+
+prim(G,w,r)
+	for u in G.v
+		u.key = max
+		u.pre = nil
+
+	r.key = 0
+	Q = G.V
+	while Q != nil 
+		u = ExtMin(Q)
+		for v in G.adj[u]
+			if v in Q && w(u,v) < v.key
+				v.pre = u
+				v.key = w(u,v)
+
+
+kruskal(G,w)
+	A = nil //目标集合
+	sort Edges by weight
+	
+	vs // visited set
+	for (u,v) in G.E.sort()
+		if vs[v] == 0 //没有访问过
+			A = A + {(u,v)}
+			vs[v] = 1, vs[u] = 1
+	return A
+
+init(G,s)
+	for i in G.E
+		d[i] = inf
+	d[s] = 0
+
+
+//拓扑排序
+topusort(G)
+	queue s
+	reult r
+	Q = G.V
+	for i in Q
+		if i.in == 0
+			s.add(i)
+	while s != nil 
+		e = s.pop()
+		r.add(e)
+		for  i  in adj(e)
+			i.count--
+			if i.count ==0 
+				s.push(i)
+	return r
+	
