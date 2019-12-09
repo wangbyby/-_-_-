@@ -30,7 +30,6 @@ void quicksort(vector<datatype*> &vec, int low, int high)//必须传引用,否�
 }
 
 
-
 int main() {
 	/*
 	vector<employee*> v;

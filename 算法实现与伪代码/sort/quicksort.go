@@ -1,15 +1,5 @@
 package sort
 
-func generateSlice(size int) Array {
-
-	slice := make(Array, size, size)
-	rand.Seed(time.Now().UnixNano())
-	for i := 0; i < size; i++ {
-		slice[i] = rand.Intn(999) - rand.Intn(999)
-	}
-	return slice
-}
-
 //希尔排序...不懂(＠_＠;)
 //shell sort
 func Shellsort(items []int) {
@@ -50,19 +40,6 @@ func element(a, b int) int {
 		a *= a
 	}
 	return e
-}
-
-type Array []int
-
-func (a Array) Swap(i, j int) {
-	a[i], a[j] = a[j], a[i]
-}
-
-func (a Array) Len() int {
-	return len(a)
-}
-func (a Array) Less(i, j int) bool {
-	return a[i] < a[j]
 }
 
 //只对向量
@@ -144,7 +121,7 @@ func insertSort(qs Interface, p, r int) {
 }
 
 func HeapSort(data Interface) {
-	buildHeap(data)
+	BuildHeap(data)
 	size := data.Len()
 	for i := size - 1; i >= 1; i-- {
 		data.Swap(0, i)

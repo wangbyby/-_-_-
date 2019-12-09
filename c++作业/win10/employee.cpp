@@ -15,6 +15,7 @@ void employee::UpperTran() {
 		}
 	}
 } // 转换大写
+
 employee::employee()
 {
 	individualEmpNo = employeeNo++;

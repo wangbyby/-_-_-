@@ -1,7 +1,8 @@
 package heap
 
 import (
-	"go_code/alg/data/deferr"
+	"errors"
+	"reflect"
 )
 
 //以下为 具体实现
@@ -21,6 +22,7 @@ func (h *Heap) BuildHeap() {
 	for j := len(h.Arr) / 2; j >= 0; j-- {
 		h.keepmin(j)
 	}
+
 }
 
 func ReHeapSort(h *Heap) {
@@ -69,7 +71,7 @@ func (h *Heap) Push(v interface{}) {
 
 func (h *Heap) Pop() (interface{}, error) {
 	if len(h.Arr) <= 0 {
-		return nil, deferr.ERR_BELOW_RANGE
+		return nil, errors.New("Bad len")
 	}
 	res := h.Arr[0]
 	h.Arr[0], h.Arr[h.size-1] = h.Arr[h.size-1], h.Arr[0]

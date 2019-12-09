@@ -1,7 +1,7 @@
 package heap
 
 import (
-	"go_code/alg/data/deferr"
+	"errors"
 )
 
 type HeapInter interface {
@@ -57,7 +57,7 @@ func keepMin(h HeapInter, i, size int) {
 }
 func Pop(h HeapInter) (interface{}, error) {
 	if h.Len() <= 0 {
-		return nil, deferr.ERR_BELOW_RANGE
+		return nil, errors.New("Bad Len")
 	}
 	size := h.Len() - 1
 	res := h.Getindex(0)

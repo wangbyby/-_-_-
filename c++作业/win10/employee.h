@@ -25,6 +25,7 @@ public:
 	float GetaccumPay();
 	bool operator > (employee  & com);
 	void UpperTran();
+	
 };
 
 class technician :public employee

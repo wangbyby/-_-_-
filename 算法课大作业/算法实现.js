@@ -1,4 +1,12 @@
 /*
+    *修改于2019.12.8 JavaScript代码实现
+    *动态规划思想
+        1.旅行商问题
+        2.广义背包问题
+        3.流水线调度问题
+*/
+
+/*
 旅行商问题 TSP
 //D 为二维数组(nxn矩阵)
 */
@@ -94,13 +102,6 @@ var s2 = new Date().getTime()
 console.log("花费时间(单位:ms):", s2 - s1)
 
 
-
-function max(a, b) {
-    if (a > b) {
-        return a
-    }
-    return b
-}
 /*
     *第一种伪代码
     for i = 1 to n
@@ -136,6 +137,7 @@ function max(a, b) {
     *空间复杂度 : O(nM)
         
     */
+
 /*
         M:背包最大承重量
         n:物品种类个数
@@ -319,8 +321,7 @@ function zero_one_KP(M, m, v) {
 //         if path[(i,j)] ==1
 //             x[i] = 1
 //             j = j - m[i]
-//         else
-//             i = i-1
+//         i = i-1
 //     return dp[n+1][M], x
 
 

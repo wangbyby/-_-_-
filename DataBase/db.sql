@@ -1,8 +1,10 @@
---pgsql
+/*
+ *sql语句如下
+ *使用的pgsql
+*/
 create database steam;
 
---游戏发行商
---一般来说 发行商与开发商 不一样
+--游戏发行商--一般来说 发行商与开发商 不一样
 create table gc(
     gcname character varying(40) primary key,
     address character varying(40) NOT NUll default '',
@@ -10,7 +12,6 @@ create table gc(
 )WITH (
     OIDS = FALSE
 )TABLESPACE pg_default;
-
 
 --游戏玩家
 create table player( 
@@ -53,11 +54,13 @@ create table issue(
     OIDS = FALSE
 )TABLESPACE pg_default;
 
+/*
 --玩家 购买 游戏
 --lpt : last play time 最近运行时间
 --bt : 购买时间
 --btype : 购买方式 : 微信, 支付宝, visa, 比特币...
 --sid : 序列号, 自动增长
+*/
 create table own(
     uname character varying(20) references player(uname) on update CASCADE on delete CASCADE,
     gname character varying(40) references game(gname) on update CASCADE on delete CASCADE ,
@@ -105,7 +108,6 @@ insert into game(gname,price) values ('Crysis',9);
 insert into game(gname,price) values ('Europa',15);
 insert into game(gname,price) values ('ABZU',8);
 insert into game(gname,price) values ('POSTAL2',1);
-
 
 --游戏玩家
 insert into player(uname, upwd, nickname,balance, ulevel) values ('dhg', '000000', '黑子',0,0);
@@ -173,10 +175,18 @@ insert into com_con(gname,cid) values('Insurgency',7);
 insert into com_con(gname,cid) values('Destiny2',8);
 
 
+--修改表结构, 增加字段
+alter table com_con add resource_url text;
+--修改表结构, 删除字段
+alter table com_con drop resource_url;
+--修改表结构, 字段更名
+alter table com_con rename resource_url to url_link;
+--修改表结构, 更改字段类型 pgsql
+alter table com_con  alter url_link type character varying(40);
 --简单查询
 select gcname,gname from issue ;
 select * from own ;
---选择表中若干数组
+--选择表中若干元组
 select gcname,gname from issue where gcname='Valve';
 select uname,gname,bprice from own where uname='wby';
 
@@ -195,14 +205,9 @@ select issue.gname,issue.iinfo,issue.itype from  own  inner join issue on own.gn
 select * from own cross join game where own.bprice=game.price and own.gname=game.gname order by own.lrt;
 --9
 insert into own(uname,gname,lrt,bt,btype,bprice) values ('wby','POSTAL2','2017-12-13','2017-9-27','支付宝',3);
-
 insert into issue(gcname,gname,itime,itype) values ('NewWorld','Insurgency:SandStorm','2018-6-10', 'FPS');
-
---
 update player SET upwd='gog$name' where uname='yc';
 update player SET nickname='赌怪',upwd='thereisnopoint' where uname='cy';
-
-
 delete from own ;
 delete from issue where itype='FPS';
 
