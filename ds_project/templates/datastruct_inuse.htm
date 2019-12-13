@@ -7,21 +7,24 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>数据结构课设</title>
         <!-- 导入jquery -->
-        <script src=" http://127.0.0.1:5000/get_file/jquery-3.4.1.min.js"> </script>
+        <script src="http://127.0.0.1:5000/get_file/jquery-3.4.1.min.js"> </script>
         <!-- 导入算法 -->
         <script src="http://127.0.0.1:5000/get_file/datastruct_TSP.js"></script>
         <!-- 高德地图api -->
         <!-- https://restapi.amap.com/v3/geocode/regeo?output=xml&location=116.486089,39.874457&key=6a159ce0aac34e52264dcc63bb7bfeca&radius=1000&extensions=all  -->
 
-        <script src="https://webapi.amap.com/maps?v=1.4.15&key=6a159ce0aac34e52264dcc63bb7bfeca&plugin=AMap.Walking&plugin=AMap.Geocoder""></script>
-        <script src=" https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"> </script> <script
-            type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
+        <script
+            src="https://webapi.amap.com/maps?v=1.4.15&key=6a159ce0aac34e52264dcc63bb7bfeca&plugin=AMap.Walking&plugin=AMap.Geocoder&plugin=AMap.MouseTool">
+        </script>
+        <script src=" https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"> </script>
+        <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
         <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
         <style>
             #container {
                 height: 1000px;
                 width: 1000px;
             }
+
             .info {
                 padding: .75rem 1.25rem;
                 margin-bottom: 1rem;
@@ -35,21 +38,52 @@
                 right: 1rem;
                 box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
             }
+
+            .context_menu {
+                position: relative;
+                min-width: 16rem;
+                padding: 0;
+            }
+
             .staytime {
                 width: 80px;
             }
+
+            .img {
+                position: relative;
+                width: 400px;
+                height: 200px;
+
+            }
+
+            .divl {
+                width: 20px;
+                height: 20px;
+                background-color: blueviolet;
+            }
+            .divr {
+                width: 20px;
+                height: 20px;
+                background-color:gold;
+            }
         </style>
     </head>
+
     <body>
         <!-- <div>
                 经纬度<input type="text" readonly="true" id="lnglat">
             </div>  -->
         <div class="info">
-            <!-- <div>
-                <input type="checkbox" name="" id="">发送邮件
-                <input type="email" name="" id=""> <br>
-                <input type="email" name="" id="">
-            </div> -->
+            <div>
+                <div>
+                    <a href="" id="alink" target="_blank">
+                        <img src="" id="img" alt="" class="img">
+                    </a>
+                </div>
+
+                <div class='divl' id="divl"></div>
+                <div class='divr' id="divr"></div>
+            </div>
             <div>
                 <div>
                     <input id="addMarker" type="checkbox" value="添加点标记">添加点标记 <br>
@@ -70,6 +104,25 @@
         <div id="container">
         </div>
         <script text="text/javascript">
+            //轮播图的准备
+            var img = document.getElementById("img")
+            var alink = document.getElementById("alink")
+            var len = 3
+            var index = 0
+            var allLinks = [
+                'http://news.bjut.edu.cn/',
+                'http://news.bjut.edu.cn/rxxy/',
+                'http://bjut.edu.cn/gdjs/'
+            ]
+            setInterval(DoCarousel, 2000) // 2s换一次
+            function DoCarousel() { //轮播图
+                img.setAttribute('src', "./img/" + index)
+                alink.setAttribute('href', allLinks[index])
+                index = (index + 1) % len
+            }
+
+
+            alert("注意 : 有网才能使用地图")
             var geocoder = new AMap.Geocoder({
                 city: "010", //城市设为北京，默认：“全国”
                 radius: 1000 //范围，默认：500
@@ -103,7 +156,7 @@
                 center: [116.481932, 39.875403], //中心点坐标
 
             });
-            //为地图注册click事件获取鼠标点击出的经纬度坐标
+            //为地图注册click事件获取鼠标点击出的经纬度坐标 , 鼠标左键
             map.on('click', function (e) {
                 //document.getElementById("lnglat").value = e.lnglat.getLng() + ',' + e.lnglat.getLat()
                 //如果添加标记
@@ -117,19 +170,20 @@
                         //offset: new AMap.Pixel(-13, -30)
                     })
                     //设置新建marker的文本内容
-                    geocoder.getAddress([e.lnglat.getLng(), e.lnglat.getLat()], function(status, result) {
-                        if (status === 'complete'&&result.regeocode) {
+                    geocoder.getAddress([e.lnglat.getLng(), e.lnglat.getLat()], function (status, result) {
+                        if (status === 'complete' && result.regeocode) {
                             var address = result.regeocode.formattedAddress;
-                            lnglat_Address[markerArr.length-1] = address.slice(10,-6)
+                            lnglat_Address[markerArr.length - 1] = address.slice(10, -6)
 
                             newMarker.setLabel({
                                 offset: new AMap.Pixel(20, 20),
-                                content: "<div >第" +(markerArr.length-1)+"个点" +lnglat_Address[markerArr.length-1] +
+                                content: "<div >第" + (markerArr.length - 1) + "个点" +
+                                    lnglat_Address[markerArr.length - 1] +
                                     '</br>停留时间(分钟)<input class="staytime" type="number" name="" ></br></div>', //设置文本标注内容
                                 direction: 'middle' //设置文本标注方位
                             })
                             map.add(newMarker)
-                        }else{
+                        } else {
                             log.error('根据经纬度查询地址失败')
                         }
                     });
@@ -139,13 +193,13 @@
                         tmp.lnglat = [e.lnglat.getLng(), e.lnglat.getLat()]
                         tmp.id = markerArr.length
                         positionArr.push(tmp)
-                        
+
                     }
                     markerArr.push(newMarker)
                 }
-                console.log("从经纬度到地点",lnglat_Address)
+                console.log("从经纬度到地点", lnglat_Address)
             });
-        
+
             //删除点 暂时有bug
             $('#delMarker').on('click', function () {
                 var e = markerArr.pop()
@@ -204,7 +258,6 @@
                     //实际算法计算部分
                     let graph = new Graph()
                     graph.info = distanceMartix
-
                     //TSP 旅行商问题
                     let result = TSP(graph, 0)
 
@@ -241,7 +294,7 @@
                             }
                             for (var i in data) {
                                 const val = data[i]
-            
+
                                 for (var j = 0; j < val[2].length; j++) {
                                     var a1 = [val[0], val[1]]
                                     var a2 = data[val[2][j]]
@@ -281,7 +334,7 @@
                                 url: "http://127.0.0.1:5000/data",
                                 success: function (data2, textStatus, jqxhr) {
                                     console.log("data2 from server = ", data2)
-                                    
+
                                     var pol_line = []
                                     for (var i = 0; i < data2[0].length; i++) {
                                         tmp = data2[0][i]
@@ -292,20 +345,24 @@
                                     $("#timeblock").empty()
                                     var emailCon = ""
                                     for (var i = 0; i < result.length - 1; i++) {
-                                        var point1 =0| positionArr[result[i]].id //起点
+                                        var point1 = 0 | positionArr[result[i]].id //起点
                                         var addr1 = lnglat_Address[point1]
-                                        var point2 = 0|positionArr[result[i + 1]].id //终点
+                                        var point2 = 0 | positionArr[result[i + 1]]
+                                            .id //终点
                                         var addr2 = lnglat_Address[point2]
-                                        console.log("point1,addr1 ,point2,adrr2 ", [point1,addr1, point2,addr2])
+                                        console.log("point1,addr1 ,point2,adrr2 ", [
+                                            point1, addr1, point2, addr2
+                                        ])
                                         std.setMilliseconds(std.getMilliseconds() +
                                             stayTime[point1] * 60 * 1000
-                                        )//设置时间
+                                        ) //设置时间
 
                                         //拼接字符串 显示时间信息在浏览器
                                         totaltime += stayTime[point1] * 60 * 1000
 
-                                        var str = "<li>" +addr1 + "-->" + addr2+'</li>'
-                                        var str2 ='<li>' +
+                                        var str = "<li>" + addr1 + "-->" + addr2 +
+                                            '</li>'
+                                        var str2 = '<li>' +
                                             std.getHours() + ":" + checkTime(std
                                                 .getMinutes()) + "-->" + data2[1][
                                                 mapPonit[point2]
@@ -315,10 +372,10 @@
                                         totaltime += data2[1][mapPonit[point2]] * 60 *
                                             1000
                                         str2 += std.getHours() + " : " + checkTime(std
-                                            .getMinutes())+ '</li>'
-                                        emailCon += str+str2
-                                        $("#timeblock").append( str )
-                                        $("#timeblock").append( str2 )
+                                            .getMinutes()) + '</li>'
+                                        emailCon += str + str2
+                                        $("#timeblock").append(str)
+                                        $("#timeblock").append(str2)
 
                                     }
                                     console.log("line=", pol_line)
@@ -347,7 +404,7 @@
                                     $.ajax({
                                         type: "post",
                                         dataType: "json",
-                                        url: "http://127.0.0.1:5000/email", 
+                                        url: "http://127.0.0.1:5000/email",
                                         data: JSON.stringify(d),
                                         success: function (data2, textStatus,
                                             jqxhr) {
@@ -357,10 +414,45 @@
                                 }
                             })
                         }
-
                     })
                 }
             })
+            //创建右键菜单
+            var menu = new ContextMenu(map);
+            //自定义菜单类
+            function ContextMenu(map) {
+                var me = this;
+                //地图中添加鼠标工具MouseTool插件
+                this.mouseTool = new AMap.MouseTool(map);
+                this.contextMenuPositon = null;
+                var content = [];
+
+                var tips = '<a href="http://libseminarroom.bjut.edu.cn">北京工业大学图书馆预约系统</a>'
+                var html_bjut_right_click_list = '<li>' + tips + '</li>'
+                content.push("<div class='info context_menu'>");
+                //--加入北京工业大学 图书馆预约系统
+                content.push(html_bjut_right_click_list);
+
+                //--加入图书馆网站
+                tips = '<a href="http://lib.bjut.edu.cn/">图书馆网站</a>'
+                html_bjut_right_click_list = '<li>' + tips + '</li>'
+                content.push(html_bjut_right_click_list)
+                //--加入提示
+                tips = '假设人的步行速度为1m/s'
+                html_bjut_right_click_list = '<li>' + tips + '</li>'
+                content.push(html_bjut_right_click_list);
+                //通过content自定义右键菜单内容
+                this.contextMenu = new AMap.ContextMenu({
+                    isCustom: true,
+                    content: content.join('')
+                });
+
+                //地图绑定鼠标右击事件——弹出右键菜单
+                map.on('rightclick', function (e) {
+                    me.contextMenu.open(map, e.lnglat);
+                    me.contextMenuPositon = e.lnglat; //右键菜单位置
+                });
+            }
 
             function computeDis(l1, l2) { //前端函数,计算比较方便
                 return AMap.GeometryUtil.distance(l1, l2);

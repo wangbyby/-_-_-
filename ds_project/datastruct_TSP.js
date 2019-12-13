@@ -74,72 +74,72 @@ function Graph() {
 }
 
 
-//动态规划
-// function TSP(D, u) { //起点为0
-//     const INF = 10000 //定义的最大值
-//     var n = D.length // n的个数
-//     var i, j, k, min, tmp;
-//     var b = 1 << (n - 1); // 点集状态总数
-//     var dp = {} // 记录状态
-//     var bridge = {} //记录中间节点
-//     for (i = 0; i < n; i++) { //初始化dp与bridge
-//         dp[i] = {}
-//         bridge[i] = {}
-//         for (j = 0; j < b; j++) {
-//             dp[i][j] = 0
-//             bridge[i][j] = INF
-//         }
-//     }
-//     for (i = 0; i < n; i++) { //初始化 dp的第0列
-//         dp[i][0] = D[i][0]
-//     }
-//     //init end
+// 动态规划
+function TSP_DP(D) { //起点为0
+    const INF = 10000 //定义的最大值
+    var n = D.length // n的个数
+    var i, j, k, min, tmp;
+    var b = 1 << (n - 1); // 点集状态总数
+    var dp = {} // 记录状态
+    var bridge = new Array(n) //记录中间节点
+    for (i = 0; i < n; i++) { //初始化dp与bridge
+        dp[i] = new Array(b)
+        bridge[i] = {}
+        for (j = 0; j < b; j++) {
+            dp[i][j] = 0
+            bridge[i][j] = INF
+        }
+    }
+    for (i = 0; i < n; i++) { //初始化 dp的第0列
+        dp[i][0] = D[i][0]
+    }
+    //init end
 
-//     //遍历二维数组即遍历dp
-//     for (i = 1; i < b - 1; i++) {
-//         for (j = 1; j < n; j++) {
-//             if ((1 << (j - 1) & i) == 0) {
-//                 //点j未访问
-//                 min = INF
-//                 for (k = 1; k < n; k++) { //遍历点集
-//                     if (1 << (k - 1) & i) {
-//                         //点k在集合中
+    //遍历二维数组即遍历dp
+    for (i = 1; i < b - 1; i++) {
+        for (j = 1; j < n; j++) {
+            if ((1 << (j - 1) & i) == 0) {
+                //点j未访问
+                min = INF
+                for (k = 1; k < n; k++) { //遍历点集
+                    if (1 << (k - 1) & i) {
+                        //点k在集合中
 
-//                         // 松弛操作
-//                         tmp = D[j][k] + dp[k][i - (1 << (k - 1))]
-//                         if (tmp < min) {
-//                             min = tmp
-//                             dp[j][i] = min
-//                             bridge[j][i] = k
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     //处理最后一列
-//     min = INF
-//     for (k = 1; k < n; k++) {
-//         // 松弛操作
-//         tmp = D[0][k] + dp[k][b - 1 - (1 << (k - 1))] //b-1-(1<<(k-1)) :  去掉k节点
-//         if (tmp < min) {
-//             min = tmp
-//             dp[0][b - 1] = min
-//             bridge[0][b - 1] = k
-//         }
-//     }
-//     var mincost = dp[0][b - 1]
-//     var path = [0]
-//     for (i = b - 1, j = 0; i > 0;) {
-//         j = bridge[j][i] // 下一个节点
-//         i = i - (1 << (j - 1))
-//         path.push(j)
-//     }
-//     path.push(0)
-//     //返回值说明 path为路径, mincost为最短花费
-//     // return [path, mincost]
-//     return path
-// }
+                        // 松弛操作
+                        tmp = D[j][k] + dp[k][i - (1 << (k - 1))]
+                        if (tmp < min) {
+                            min = tmp
+                            dp[j][i] = min
+                            bridge[j][i] = k
+                        }
+                    }
+                }
+            }
+        }
+    }
+    //处理最后一列
+    min = INF
+    for (k = 1; k < n; k++) {
+        // 松弛操作
+        tmp = D[0][k] + dp[k][b - 1 - (1 << (k - 1))] //b-1-(1<<(k-1)) :  去掉k节点
+        if (tmp < min) {
+            min = tmp
+            dp[0][b - 1] = min
+            bridge[0][b - 1] = k
+        }
+    }
+    var mincost = dp[0][b - 1]
+    var path = [0]
+    for (i = b - 1, j = 0; i > 0;) {
+        j = bridge[j][i] // 下一个节点
+        i = i - (1 << (j - 1))
+        path.push(j)
+    }
+    path.push(0)
+    //返回值说明 path为路径, mincost为最短花费
+    // return [path, mincost]
+    return path
+}
 
 function TSP(G, u) {
     var ver = G.Vertex()

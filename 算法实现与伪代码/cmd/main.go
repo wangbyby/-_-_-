@@ -7,7 +7,16 @@ import (
 )
 
 func main() {
+	n := name{Task: Doing}
+	n.Task()
+}
 
+func Doing() {
+	fmt.Println("i am doing sth")
+}
+
+type name struct {
+	Task func()
 }
 
 func generateSlice(size int) []int {

@@ -1,7 +1,10 @@
-/*
+/*多行注释
  *sql语句如下
  *使用的pgsql
 */
+-- : 单行注释
+
+--创建 名为steam的数据库
 create database steam;
 
 --游戏发行商--一般来说 发行商与开发商 不一样
@@ -201,20 +204,18 @@ select  max(current_timestamp - bt) as owntime from own;
 select uname, Max(bprice) from own group by uname;
 select own.uname, min( (now()-lrt))as not_playtime from own group by own.uname;
 --多表连接查询
+-- 用户 wby 拥有的游戏的发行时间,发行信息,以及游戏类型
+select     tmp.gname ,tmp.itime, tmp.iinfo,tmp.itype  from own join issue on own.gname=issue.gname as tmp where own.uname='wby'; 
+-- 试试内连接
 select issue.gname,issue.iinfo,issue.itype from  own  inner join issue on own.gname=issue.gname; 
+--原价买的游戏, 按照最后运行时间排序
 select * from own cross join game where own.bprice=game.price and own.gname=game.gname order by own.lrt;
 --9
 insert into own(uname,gname,lrt,bt,btype,bprice) values ('wby','POSTAL2','2017-12-13','2017-9-27','支付宝',3);
+-- issue的有一列为空
 insert into issue(gcname,gname,itime,itype) values ('NewWorld','Insurgency:SandStorm','2018-6-10', 'FPS');
 update player SET upwd='gog$name' where uname='yc';
 update player SET nickname='赌怪',upwd='thereisnopoint' where uname='cy';
+
 delete from own ;
 delete from issue where itype='FPS';
-
-
-
--- : 注释
-/*
-    多行注释
-*/
---select max(f.num) from own , (select count(gname) as num from own group by uname) as f;
