@@ -1,0 +1,40 @@
+{{define "../view/login.htm"}}
+
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <script src="https://lib.sinaapp.com/js/jquery/2.0.2/jquery-2.0.2.min.js"></script>
+        <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title></title>
+    </head>
+
+    <body>
+        <p>{{ .title}}</p>
+        <form action="./login" method="post" enctype="multipart/form-data">
+            <div>
+                账号<input type="text" name="user" id="uname"><br>
+                密码<input type="password" name="password" id="upwd"><br>
+                <input type="submit" value="提交" id="submit">
+            </div>
+
+        </form>
+
+        <script>
+            $(document).ready(function () {
+                $('#submit').click(function(){
+                    var uname = $('#uname').val()
+                    var upwd = $('upwd').val()
+                    $.cookie('name',uname)
+                })
+                
+            });
+        </script>
+    </body>
+
+</html>
+
+{{end}}

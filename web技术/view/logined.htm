@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://lib.sinaapp.com/js/jquery/2.0.2/jquery-2.0.2.min.js"></script>
+
+</head>
+<body>
+        <p>姓名：<input type="text" id="test" value="米老鼠"></p>
+        <button>显示值</button>
+        <script>
+                $(document).ready(function(){
+                    $("button").click(function(){
+                        alert("Value: " + $("#test").val());
+                });
+            });
+            </script>
+            <script></script>
+</body>
+</html>
+
