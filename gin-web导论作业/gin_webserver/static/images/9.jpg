@@ -1,0 +1,12 @@
+17074317
+760723@jtyJTY
+
+putty
+	172.21.17.211
+	17074316
+	289476
+
+
+
+cd C:\postgresql-10.9-1-windows-x64-binaries\pgsql\bin
+pg_ctl -D data -l logfile start

@@ -1,0 +1,210 @@
+{{define "../view/admin.htm"}}
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>{{.doc}}</title>
+        <div>{{.logined}}</div>
+        <p>{{.ulevel}}</p>
+        <style type="text/css">
+            * {
+                margin: 0;
+                padding: 0;
+            }
+
+            .main {
+                width: 100%;
+                height: 100%;
+
+            }
+
+            .quarter-div {
+                width: 50%;
+                height: 100%;
+                float: left;
+                position: relative;
+            }
+
+            /*
+            .blue {
+                background-color: #5BC0DE;
+            }
+
+            .green {
+                background-color: #5CB85C;
+            }
+            */
+            img {
+                width: 400px;
+                height: 400px;
+            }
+        </style>
+        <script src="https://lib.sinaapp.com/js/jquery/2.0.2/jquery-2.0.2.min.js"></script>
+        <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    </head>
+
+    <body>
+        <div>
+            <form action="./login" method="get">
+                <input type="submit" name="登录" value="登录" >
+            </form>
+        </div>
+        <div>
+
+            <li>
+                <button id="queryall" type="submit">查询所有菜</button> <br>
+            </li>
+            <li>
+                <button id='com'>计算选中的总价格</button> <br>
+            </li>
+            <li>
+                <form action="/query" method="get">
+                    <input type="hidden" name="type" value="delete">
+
+                    菜名<input type="text" name="name" ><br>
+
+                    <input type="submit" value="删除菜(根据菜名)">
+                </form>
+            </li>
+            <li>
+                <form action="/query" method="get">
+                    <input type="hidden" name="type" value="update">
+                    旧名字<input type="text" name="oldname" ><br>
+                    新名字<input type="text" name="newname" ><br>
+                    价格 <input type="number" name="price" > <br>
+                    <input type="radio" name="class" value="肉菜">肉菜 <br>
+                    <input type="radio" name="class" value="素菜">素菜 <br>
+                    <input type="submit" value="更新菜">
+                </form>
+            </li>
+
+            <li>
+                <input type="file" name="" id="up"> <button id="upfile"> 上传图片</button> <br>
+                <form action="/query" method="get">
+                    <input type="hidden" name="type" value="insert">
+                    新增菜名字<input type="text" name="name" ><br>
+                    价格 <input type="number" name="price" > <br>
+                    <input type="radio" name="class" value="肉菜">肉菜 <br>
+                    <input type="radio" name="class" value="素菜">素菜 <br>
+                    <input type="hidden" name="imgurl" value="" id='imgurl'>
+                    <input type="submit" value="添加菜">
+                </form>
+
+            </li>
+        </div>
+
+        <div class="main">
+
+            <div class="quarter-div" id="0">
+                素菜
+            </div>
+            <div class="quarter-div" id='1'>
+                肉菜
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+
+                $('#upfile').click(function (){
+                    uploadFile()
+                })
+
+                
+                function uploadFile() {
+
+                    var formData = new FormData();
+                    formData.append("file", $("#up")[0].files[0]);
+                    //formData.append("service", 'App.Passion.UploadFile');
+                    
+                    $.ajax({
+                        url: '/uploadone',
+                        type: 'post',
+                        data: formData,
+                        cache:false,
+                        contentType: false,
+                        processData: false,
+                        success: function (res) {
+                            console.log(res);
+                            var imgUrl = res.url.split('.')[0]
+                            console.log(imgUrl) 
+                            $('#imgurl').attr('value', imgUrl)
+                            alert("上传文件成功")
+                        }
+                    })
+                }
+                
+                var meat = $('#1') //肉菜
+                var furit = $("#0") //素菜
+                $('#queryall').click(function () {
+                    meat.html('')
+                    furit.html('')
+                    var user = $.cookie('name')
+                    var url = "/query?type=query&id=0"
+
+                    if (user != undefined) {
+                        $.ajax({
+                            type: "get",
+                            dataType: "json",
+                            url: url,
+                            data: {
+                                params: JSON.stringify()
+                            },
+                            success: function (data, textStatus, jqxhr) {
+                                console.log(data)
+                                for (var i in data) {
+                                    const valueData = data[i]
+                                    var dishprice = String(valueData['价格'])
+                                    dishprice = dishprice.split('$')[1] | 0
+                                    
+                                    var imgurl = "/download?url=" + valueData[
+                                            'imgurl'] +
+                                        ".jpg"
+                                    var imgDom = '<img src="' + imgurl + '">'
+                                    var dishName_Price =
+                                        '<input type="checkbox" value="' +
+                                        dishprice +
+                                        '">' + valueData['菜名'] + " : " +
+                                        dishprice + "元"
+
+                                    var dishdiv = '<div>' + imgDom +
+                                        dishName_Price +
+                                        '</div>'
+                                    if (valueData['菜系'] == "肉菜") {
+                                        meat.append(dishdiv)
+
+                                    } else if (valueData['菜系'] == "素菜") {
+                                        furit.append(dishdiv)
+                                    }
+                                }
+
+                            }
+                        })
+                    } else {
+                        $(location).attr('href', './login')
+                    }
+
+                })
+
+                $('#com').click(function () { //计算总价格
+                    var total = $('input:checkbox')
+                    var sumPrice = 0
+                    for (var i = 0; i < total.length; i++) {
+                        const item = total[i]
+                        if (item.checked) {
+                            sumPrice = sumPrice + (item.value | 0)
+                            console.log(sumPrice)
+                        }
+                    }
+                    alert("总价格为 : " + sumPrice + "元")
+                })
+
+
+            })
+        </script>
+
+
+    </body>
+
+</html>
+{{end}}
