@@ -9,63 +9,24 @@ import  numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 import os
-
-#LossHistory类，保存loss和acc
-class LossHistory(keras.callbacks.Callback):
-    def on_train_begin(self, logs={}):
-        self.losses = {'batch':[], 'epoch':[]}
-        self.accuracy = {'batch':[], 'epoch':[]}
-        self.val_loss = {'batch':[], 'epoch':[]}
-        self.val_acc = {'batch':[], 'epoch':[]}
-
-    def on_batch_end(self, batch, logs={}):
-        self.losses['batch'].append(logs.get('loss'))
-        self.accuracy['batch'].append(logs.get('acc'))
-        self.val_loss['batch'].append(logs.get('val_loss'))
-        self.val_acc['batch'].append(logs.get('val_acc'))
-
-    def on_epoch_end(self, batch, logs={}):
-        self.losses['epoch'].append(logs.get('loss'))
-        self.accuracy['epoch'].append(logs.get('acc'))
-        self.val_loss['epoch'].append(logs.get('val_loss'))
-        self.val_acc['epoch'].append(logs.get('val_acc'))
-
-    def loss_plot(self, loss_type):
-        iters = range(len(self.losses[loss_type]))
-        plt.figure()
-        # acc
-        plt.plot(iters, self.accuracy[loss_type], 'r', label='train acc')
-        # loss
-        plt.plot(iters, self.losses[loss_type], 'g', label='train loss')
-    
-        # val_acc
-        plt.plot(iters, self.val_acc[loss_type], 'b', label='val acc')
-        # val_loss
-        plt.plot(iters, self.val_loss[loss_type], 'k', label='val loss')
-        plt.grid(True)
-        plt.xlabel(loss_type)
-        plt.ylabel('acc-loss')
-        plt.legend(loc="upper right")
-        plt.show()
-
+import random
+import matplotlib as mpl
+from matplotlib.image import imread
 batch_size = 128
 num_classes = 10
-epochs = 6 #数据训练次数
-
+epochs = 12#次数
 img_rows, img_cols = 28, 28
-#表示猫和狗
 classs1 = {1:'狗',0:'猫'}
 classes2={'cat':0,'dog':1}
 """
-
+train文件夹下
     0 : 猫🐱
     1 : 狗🐕
 """
-#文件转换为 np 数组 用于预测
+#文件转换为 np 数组 用于predict
 def image_file_nparray(image_path, width=100,height=100):
     img = image.load_img(image_path, target_size=(width,height))
     img = image.img_to_array(img)
-    #扩展维度
     x = np.expand_dims(img, axis=0)
     return x
 #裁剪单个图片
@@ -77,9 +38,11 @@ def convert_one_image(file_path,width=100,height=100):
     except Exception as e:
         print("convert image error")
         print(e)
-#剪裁一个目录下所有图片
+#剪裁改目录下所有图片
+#用于二级目录
 def convert_all_images(all_images_path):
     first_dir = os.listdir(all_images_path)
+
     for i in first_dir:
         _file_path = all_images_path + '/' + i
         if os.path.isdir(_file_path): #是目录    
@@ -89,11 +52,9 @@ def convert_all_images(all_images_path):
                 convert_one_image(path_image)  # 转换
         else: #不是目录, 直接转换
             convert_one_image(_file_path)  # 转换
-
-
-
 # image转换为 np 数组, 用于 训练模型
 def images_nparray(all_images_path):
+    import os
     _x = []
     _y = []
     for i in os.listdir(all_images_path):
@@ -122,7 +83,6 @@ def images_nparray(all_images_path):
             img__ = np.array(img__)
             _x.append(img__)
     return np.array(_x), np.array(_y)
-
 # np数组 转换为 npz文件
 def nparray_to_npz(train_path, test_path,npz_file_path):
     convert_all_images(train_path)
@@ -131,11 +91,8 @@ def nparray_to_npz(train_path, test_path,npz_file_path):
     x_test,y_test = images_nparray(test_path)
     #保存压缩文件
     np.savez(npz_file_path, x_train=x_train,y_train=y_train,x_test=x_test,y_test=y_test)
-
-
-
 #训练函数
-def running_train_test(npz_file_path,save_file_path):
+def running_train_test(npz_file_path, save_file_path):
     input_shape = (100,100,3)
     # the data, split between train and test sets
     data = np.load(npz_file_path)
@@ -148,12 +105,10 @@ def running_train_test(npz_file_path,save_file_path):
     print('x_train shape:', x_train.shape)
     print(x_train.shape[0], 'train samples')
     print(x_test.shape[0], 'test samples')
-
     # convert class vectors to binary class matrices
     y_train = keras.utils.to_categorical(y_train, num_classes)
     y_test = keras.utils.to_categorical(y_test, num_classes)
 
-    #模型框架
     model = Sequential()
     model.add(Conv2D(32, kernel_size=(3, 3),
                         activation='relu',
@@ -169,36 +124,70 @@ def running_train_test(npz_file_path,save_file_path):
     model.compile(loss=keras.losses.categorical_crossentropy,
                     optimizer=keras.optimizers.Adadelta(),
                     metrics=['accuracy'])
-    #用于绘制
-    history = LossHistory()
 
-    model.fit(x_train, y_train,
+
+    hist = model.fit(x_train, y_train,
                 batch_size=batch_size,
                 epochs=epochs,
                 verbose=1,
-                validation_data=(x_test, y_test),callbacks=[history])
+                validation_data=(x_test, y_test))
     score = model.evaluate(x_test, y_test, verbose=0)
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
     model.save(save_file_path) #保存
-    history.loss_plot('epoch')
-#入口函数 转换与训练
-def train_test_images_to_model(train, test, npz_path, h5_path):
+    #绘图
+    plt.figure()
+    print(hist.history)
+    acc = hist.history['accuracy']
+    val_acc = hist.history['val_accuracy']
+    loss = hist.history['loss']
+    val_loss = hist.history['val_loss']
+    epochs2 = range(len(acc))
+    plt.plot(epochs2, acc, 'bo', label='Training acc')  # 'bo'为画蓝色圆点，不连线
+    plt.plot(epochs2, val_acc, 'b', label='Validation acc')
+    plt.title('Training and validation accuracy')
+    plt.legend()  # 绘制图例，默认在右上角
+    plt.figure()
+    plt.plot(epochs2, loss, 'bo', label='Training loss')
+    plt.plot(epochs2, val_loss, 'b', label='Validation loss')
+    plt.title('Training and validation loss')
+    plt.legend()
 
+    plt.show()
+
+# 转换与训练
+def train_test_images_to_model(train, test, npz_path, h5_path):
     nparray_to_npz(train,test,npz_path)
     running_train_test(npz_path,h5_path)
-
-
 # 用于预测
 def load_model_from_h5_and_predict(h5_path, pre_path):
     model = load_model(h5_path)
     # convert_one_image(pre_path)
     pre_nparray = image_file_nparray(pre_path)
     pre_y = model.predict_classes(pre_nparray)
-
     print("结果 : ",classs1[pre_y[0]])
+    return classs1[pre_y[0]]
 
-
+def predict_one_file(model, pre_path):
+    pre_nparray = image_file_nparray(pre_path)
+    pre_y = model.predict_classes(pre_nparray)
+    print("结果 : ", classs1[pre_y[0]])
+    return classs1[pre_y[0]]
+def predict_dir_images(h5_path, pre_path, num=10):
+    model = load_model(h5_path)
+    res = []
+    mpl.rcParams['font.sans-serif'] = ['FangSong']  # 指定默认字体
+    mpl.rcParams['axes.unicode_minus'] = False  # 解决保存图像是负号'-'显示为方块的问题
+    for i in range  (num):
+        imgpath =  random.randint(1,10000)
+        imgpath = pre_path+"/"+str(imgpath)+".jpg"
+        tmp = predict_one_file(model,imgpath)
+        res.append({"file":imgpath,"result":tmp})
+        img = imread(imgpath)
+        plt.subplot(2,5,i+1)
+        plt.title(imgpath+" : "+tmp)
+        plt.imshow(img)
+    return res
 #main函数...
 if "__main__" == __name__:
     npz_path = 'cat_dog.npz'
@@ -206,5 +195,7 @@ if "__main__" == __name__:
     test_dir_path = 'test'
     train_dir_path = 'train'
     # train_test_images_to_model(train_dir_path, test_dir_path, npz_path, save_path)
-    pre_path = 'dog.jpg'
-    load_model_from_h5_and_predict(save_path, pre_path)
+    pre = 'pre'
+    res = predict_dir_images(save_path,pre)
+    plt.show()
+    print(res)

@@ -1,8 +1,7 @@
 /*
-旅行商问题 TSP 动态规划-状态压缩实现
-//D 为二维数组(nxn矩阵)
+--旅行商问题 TSP 动态规划-状态压缩实现
+--D 为二维数组(nxn矩阵)
 */
-
 function TSP(D) { //起点为0
     const INF = 10000 //定义的最大值
     var n = D.length // n的个数
@@ -22,7 +21,6 @@ function TSP(D) { //起点为0
         dp[i][0] = D[i][0]
     }
     //init end
-
     //遍历二维数组即遍历dp
     for (i = 1; i < b - 1; i++) {
         for (j = 1; j < n; j++) {
