@@ -7,9 +7,9 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>数据结构课设</title>
         <!-- 导入jquery -->
-        <script src="http://127.0.0.1:5000/get_file/jquery-3.4.1.min.js"> </script>
+        <script src="/get_file/jquery-3.4.1.min.js"> </script>
         <!-- 导入算法 -->
-        <script src="http://127.0.0.1:5000/get_file/datastruct_TSP.js"></script>
+        <script src="/get_file/datastruct_TSP.js"></script>
         <!-- 高德地图api -->
         <!-- https://restapi.amap.com/v3/geocode/regeo?output=xml&location=116.486089,39.874457&key=6a159ce0aac34e52264dcc63bb7bfeca&radius=1000&extensions=all  -->
 
@@ -57,14 +57,16 @@
             }
 
             .divl {
-                width: 20px;
+                width: 30px;
                 height: 20px;
                 background-color: blueviolet;
+                float: left;
             }
             .divr {
-                width: 20px;
+                width: 30px;
                 height: 20px;
                 background-color:gold;
+                float: right;
             }
         </style>
     </head>
@@ -79,10 +81,13 @@
                     <a href="" id="alink" target="_blank">
                         <img src="" id="img" alt="" class="img">
                     </a>
+                    <div>
+                        <div class='divl' id="divl">left</div>
+                        <div class='divr' id="divr">right</div>
+                    </div>
                 </div>
-
-                <div class='divl' id="divl"></div>
-                <div class='divr' id="divr"></div>
+                
+                
             </div>
             <div>
                 <div>
@@ -111,8 +116,8 @@
             var index = 0
             var allLinks = [
                 'http://www.bjut.edu.cn/gdjs/',
-                'http://news.bjut.edu.cn/rxxy/',
-                'http://bjut.edu.cn/gdjs/'
+                'http://libseminarroom.bjut.edu.cn/',
+                'http://lib.bjut.edu.cn/'
             ]
             setInterval(DoCarousel, 2000) // 2s换一次
             function DoCarousel() { //轮播图
@@ -120,7 +125,16 @@
                 alink.setAttribute('href', allLinks[index])
                 index = (index + 1) % len
             }
-
+            $('#divr').click(function () {
+                index = (index + 1) % len
+                img.setAttribute('src', "./img/" + index)
+                alink.setAttribute('href', allLinks[index])
+            })
+            $('#divl').click(function (){
+                index = (index - 1+len) % len
+                img.setAttribute('src', "./img/" + index)
+                alink.setAttribute('href', allLinks[index])
+            })
 
             alert("注意 : 有网才能使用地图")
             var geocoder = new AMap.Geocoder({
@@ -427,15 +441,9 @@
                 this.contextMenuPositon = null;
                 var content = [];
 
-                var tips = '<a href="http://libseminarroom.bjut.edu.cn">北京工业大学图书馆预约系统</a>'
-                var html_bjut_right_click_list = '<li>' + tips + '</li>'
-                content.push("<div class='info context_menu'>");
-                //--加入北京工业大学 图书馆预约系统
-                content.push(html_bjut_right_click_list);
-
                 //--加入图书馆网站
-                tips = '<a href="http://lib.bjut.edu.cn/">图书馆网站</a>'
-                html_bjut_right_click_list = '<li>' + tips + '</li>'
+                var tips = '<a href="http://lib.bjut.edu.cn/">图书馆网站</a>'
+                var html_bjut_right_click_list = '<li>' + tips + '</li>'
                 content.push(html_bjut_right_click_list)
                 //--加入提示
                 tips = '假设人的步行速度为1m/s'
