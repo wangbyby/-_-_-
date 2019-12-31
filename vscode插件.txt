@@ -1,7 +1,0 @@
-Bracket Pair Colorizer
-Go To Method
-Horizon Theme
-Indent-Rainbow
-vscode-icons
-kite
-wsl

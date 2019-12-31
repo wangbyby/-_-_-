@@ -63,7 +63,7 @@
                 float: left;
             }
             .divr {
-                width: 30px;
+                width: 40px;
                 height: 20px;
                 background-color:gold;
                 float: right;
@@ -443,13 +443,14 @@
 
                 //--加入图书馆网站
                 var tips = '<a href="http://lib.bjut.edu.cn/">图书馆网站</a>'
-                var html_bjut_right_click_list = '<li>' + tips + '</li>'
+                var html_bjut_right_click_list = '<div><li>' + tips + '</li></div>'
                 content.push(html_bjut_right_click_list)
                 //--加入提示
                 tips = '假设人的步行速度为1m/s'
                 html_bjut_right_click_list = '<li>' + tips + '</li>'
                 content.push(html_bjut_right_click_list);
                 //通过content自定义右键菜单内容
+                
                 this.contextMenu = new AMap.ContextMenu({
                     isCustom: true,
                     content: content.join('')
