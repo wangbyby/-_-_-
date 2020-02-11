@@ -16,7 +16,6 @@ macro_rules! new_int {
     }
 }
 
-
 macro_rules! theobject_null {
     () => {
         new_box!(TheObject::NULL)
@@ -26,12 +25,6 @@ macro_rules! theobject_null {
 
 const TRUE: object::TheObject = object::TheObject::Boolean(true);
 const FALSE:  object::TheObject = object::TheObject::Boolean(false);
-
-
-
-// pub fn eval(node:& Box<ast::ASTNode>, mut env:& Environment)->Box<object::TheObject> {
-//     __eval(node,&mut env)
-// }
 
 
 pub fn eval(node:& Box<ast::ASTNode>, mut env:&mut  Environment) ->Box<object::TheObject> {
@@ -53,7 +46,7 @@ pub fn eval(node:& Box<ast::ASTNode>, mut env:&mut  Environment) ->Box<object::T
                     return val;
                 }        
                 env.store.insert(value.name.value.clone(), val.clone());
-        
+                return eval_identifier(value.name.as_ref(),&env);
             },
             ReturnStatement(ref value) => {
                 let val = eval(&value.return_value,env);
@@ -73,6 +66,51 @@ pub fn eval(node:& Box<ast::ASTNode>, mut env:&mut  Environment) ->Box<object::T
                     return args[0].clone();
                 }
                 return apply_function(&function, &args);
+            },
+            StringLiteral( _,ref value)=> return new_box!(object::TheObject::Stringobj(value.clone())),
+            ArrayLiteral( _,ref values)=> return new_box!(object::TheObject::Array(eval_expressions(&values, &mut env))),
+            IndexLiteral(_,ref left,ref right)=> {
+                let left_val = eval(&left, &mut env);
+                if left_val.as_ref().is_error(){
+                    return left_val;
+                }
+                let index = eval(&right, &mut env);
+                if index.as_ref().is_error(){
+                    return index;
+                }
+                return eval_index_expression(&left_val, &index);
+            } ,
+            HashLiteral(_, ref pairs) =>{
+                use crate::object::object::TheObject::*;
+
+let mut map : HashMap<String,Box<object::TheObject>> = HashMap::new();
+                // let map : HashMap<String,Box<object::TheObject>> = pairs.iter()
+                //                                                         .map(|(k,v)| (format!("{:?}",eval(k,&mut env)) , eval(v,&mut env)))
+                //                                                         .collect();
+                // let error: Vec<&Box<object::TheObject>> = map.iter()
+                //                                                 .filter(|(_,v)| v.as_ref().is_error())
+                //                                                 .map(|(_,v)| v)
+                //                                                 .collect();
+                // if error.len() != 0 {
+                //     return error[0].clone();
+                // }
+                for (k,v) in pairs.iter(){
+                    let key = eval(k, &mut env);
+                    if key.as_ref().is_error(){
+                        return new_error(format!("{:#?} is not a key type",key.as_ref()));
+                    }
+                    //key ==> String
+                    let key_str:String = format!("{:#?}",key.as_ref());
+
+                    let value = eval(v, &mut env);
+                    if value.as_ref().is_error(){
+                        return new_error(format!("{:#?} is not a key type",value.as_ref()));
+                    }
+
+                    map.insert(key_str, value);
+
+                }
+                return new_box!(Map(map));
             },
             _ => return theobject_null!(),
         }
@@ -160,6 +198,8 @@ fn eval_infix_expr(operator:&str, left:& Box<object::TheObject>,right:& Box<obje
     
     if left.type_of() == object::INTEGER_OBJ && right.type_of() == object::INTEGER_OBJ{
         return eval_integer_infix_expression(operator, left, right);
+    }else if right.type_of() == object::STRING_OBJ && left.type_of() == object::STRING_OBJ{
+        return eval_string_infix_expression(operator, left, right);
     }else if left.as_ref().type_of() != right.as_ref().type_of(){
         return new_error(format!("type dismatch: {:#?} {} {:#?}",left, operator, right));
     }else if operator == "=="|| operator == "!=" {
@@ -167,9 +207,18 @@ fn eval_infix_expr(operator:&str, left:& Box<object::TheObject>,right:& Box<obje
     }else{
         return new_error(format!("unknown operator: {} {} {}",left.as_ref().type_of(), operator,right.as_ref().type_of()));
     }
+}
 
-    
-    
+
+fn eval_string_infix_expression(operator:&str, left:&Box<object::TheObject>,right:&Box<object::TheObject>)->Box<object::TheObject> {
+    if operator != "+"{
+        return new_error(format!("unknown operator: {} {} {}",left.as_ref().type_of(), operator,right.as_ref().type_of()));
+    }
+    match (left.as_ref(), right.as_ref()) {
+        (TheObject::Stringobj(a), TheObject::Stringobj(b))=>
+            new_box!(object::TheObject::Stringobj(format!("{}{}",a,b))),
+        _ => new_error(format!("unknown operator: {} {} {}",left.as_ref().type_of(), operator,right.as_ref().type_of())),
+    }
 }
 
 fn cmp_boolobject(operator:&str,left:& Box<object::TheObject>,right:& Box<object::TheObject>)->Box<object::TheObject> {
@@ -260,9 +309,47 @@ fn eval_statements(stmts:& Vec<Box<ast::ASTNode>>,mut env:&mut Environment )->Bo
     result
 }
 
+
+fn eval_index_expression(left: & Box<object::TheObject>, index: & Box<object::TheObject>)->Box<object::TheObject> {
+    if left.as_ref().type_of() == object::ARRAY_OBJ&&index.as_ref().type_of() == object::INTEGER_OBJ{
+        eval_array_index_expression(left, index)
+    }else if left.as_ref().type_of() == object::MAP_OBJ{
+        eval_hash_index_expression(left, index)
+    }else{
+        new_error(format!("index operator not support {}", left.as_ref().type_of()))
+    }
+}
+
+fn eval_hash_index_expression(map: & Box<object::TheObject>, index: & Box<object::TheObject>)->Box<object::TheObject> {
+    use crate::object::object::TheObject::*;
+    match map.as_ref() {
+        Map(ref map)=>{ 
+            map.get(&format!("{:#?}",index)).unwrap_or(&Box::new(NULL)).clone()
+        },
+        _=> new_error(format!("not a map object")),
+    }
+}
+
+
+fn eval_array_index_expression(array: & Box<object::TheObject>, index: & Box<object::TheObject>)->Box<object::TheObject> {
+    use crate::object::object::TheObject::*;
+    match (array.as_ref(), index.as_ref()) {
+        (Array(ref array), Integer(ref index)) =>{
+            if *index<0 || *index> array.len() as i64{
+                return new_error(format!("index out of bounds length of array is {}, but have {}",array.len(),*index));
+            }
+            
+            array[*index as usize].clone()
+        }, 
+        _=> new_error(format!("there has some error "))
+    }
+}
+
 fn new_error<S: Into<String>>(s :S)->Box<object::TheObject> {
     new_box!(object::TheObject::Errors(s.into()))
 }
+
+
 
 
 // pub type Environment = HashMap<String,Box<object::TheObject>>;
@@ -291,3 +378,4 @@ impl Environment{
         }
     }
 }
+
