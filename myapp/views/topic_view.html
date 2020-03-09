@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {{template "header"}}
+        <title>{{.Topic.Title}}</title>
+    </head>
+
+    <body>
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                {{template "navbar" .}}
+            </div>
+        </div>
+        <div class="container">
+            {{$labels := .Labels}}
+        
+            {{with .Topic}}
+
+            <h1>{{.Title}} <small>{{.Category}}</small></h1>
+            <h5>文章附件 <label for=""> <a href="/attachment/{{.Attachment}}">{{.Attachment}}</a></label></h5>
+            <h5>
+                {{range $labels}}
+                <a href="/?label={{.}}">{{.}}</a>
+                {{end}}
+            </h5>
+            
+            <a href="/topic/modify?tid={{.Id}}" class="btn btn-default">修改文章</a>
+            <textarea name="content" cols="20" rows="10" class="form-control" readonly>{{.Content}}</textarea>
+    
+            {{end}}
+        </div>
+        <div class="container">
+            <h3>评论</h3>
+            {{$tid := .Topic.Id}}
+            {{$isLogin := .IsLogin}}
+            <div class="form-group">
+                {{range .Replyies}}
+                <ul>
+                    <li>
+                        <h3>{{.Name}}
+                            <small>{{.Created}}</small>
+                            {{if $isLogin}}
+                            <small>
+                                <a href="/reply/delete?tid={{$tid}}&rid={{.Id}}">删除</a>
+                            </small>
+                            {{end}}
+                        </h3>
+                        {{.Content}}
+                    </li>
+                </ul>
+                {{end}}
+            </div>
+
+            <h3>添加评论</h3>
+            <form action="/reply/add" method="post">
+                <input type="hidden" name="tid" value="{{.Topic.Id}}">
+                <div class="form-group">
+                    <label for="">昵称</label>
+                    <input type="text" name="nickname" class="form-control" id="">
+                </div>
+                <div class="form-group">
+                    <label for="">评论</label>
+                    <textarea name="content" cols="30" rows="10" class="form-control"></textarea>
+                </div>
+                <button class="btn btn-default">提交</button>
+            </form>
+        </div>
+
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <script src="/static/js/bootstrap.min.js"></script>
+    </body>
+</html>
