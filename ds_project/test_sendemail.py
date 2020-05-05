@@ -7,7 +7,7 @@ args = {
     "port":"465"
 } 
 
-reciver = ["wang115byby@163.com","3453667697@qq.com"]
+reciver = ["wwww@163.com","www@qq.com"]
 email = yagmail.SMTP(**args)
 
 email.send(to=reciver, subject="hello",contents="i am van")
