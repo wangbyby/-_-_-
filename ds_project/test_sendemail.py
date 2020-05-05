@@ -1,8 +1,8 @@
 import  yagmail
 
 args = {
-    "user":"3453667697@qq.com",
-    "password":"euymebcvccqcdaei",
+    "user":"xx @qq.com",
+    "password":" x",
     "host":"smtp.qq.com",
     "port":"465"
 } 
