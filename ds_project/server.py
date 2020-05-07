@@ -7,8 +7,8 @@ app = Flask(__name__, static_url_path='')
 
 #send emails 的配置
 email_args = {
-    "user":"3453667697@qq.com",
-    "password":"euymebcvccqcdaei",
+    "user":"xxx@qq.com",
+    "password":"xxx",
     "host":"smtp.qq.com",
     "port":"465"
 }
